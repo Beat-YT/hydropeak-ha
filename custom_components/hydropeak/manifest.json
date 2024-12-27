@@ -2,11 +2,12 @@
     "domain": "hydropeak",
     "name": "Hydro-Peak",
     "version": "1.0.0",
+    "documentation": "https://github.com/Beat-YT/hydropeak-ha",
+    "issue_tracker": "https://github.com/Beat-YT/hydropeak-ha/issues",
     "integration_type": "service",
-    "config_flow": true,
-    "documentation": "https://example.com/docs",
     "requirements": ["aiohttp"],
     "platforms": ["sensor"],
+    "config_flow": true,
     "codeowners": [
         "@Beat-YT"
     ]
