@@ -1,0 +1,29 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Configuration de HydroPeak",
+                "description": "Configurez votre intégration des événements de pointe d'Hydro-Québec.",
+                "data": {
+                    "offre_hydro": "Choisissez l'offre d'Hydro-Québec",
+                    "preheat_duration": "Durée de préchauffage (en minutes)",
+                    "update_interval": "Intervalle de mise à jour (en minutes)"
+                }
+            }
+        },
+        "abort": {
+            "already_configured": "L'offre {offre} est déjà configurée."
+        }
+    },
+    "exceptions": {
+        "rate_limit": {
+            "message": "Vous avez atteint la limite de requêtes de l'API Hydro-Québec. Veuillez réessayer plus tard."
+        },
+        "http_error": {
+            "message": "Une erreur s'est produite lors de la communication avec l'API Hydro-Québec. Erreur HTTP {status}."
+        },
+        "bad_json": {
+            "message": "Une erreur s'est produite lors de l'analyse de la réponse de l'API Hydro-Québec. Veuillez réessayer plus tard."
+        }
+    }
+}

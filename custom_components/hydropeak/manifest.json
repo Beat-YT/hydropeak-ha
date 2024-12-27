@@ -1,0 +1,13 @@
+{
+    "domain": "hydropeak",
+    "name": "Hydro-Peak",
+    "version": "1.0.0",
+    "integration_type": "service",
+    "config_flow": true,
+    "documentation": "https://example.com/docs",
+    "requirements": ["aiohttp"],
+    "platforms": ["sensor"],
+    "codeowners": [
+        "@Beat-YT"
+    ]
+}

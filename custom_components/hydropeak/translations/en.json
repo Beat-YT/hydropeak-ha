@@ -1,0 +1,29 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "HydroPeak Configuration",
+                "description": "Configure your Hydro-Québec peak events integration.",
+                "data": {
+                    "offre_hydro": "Choose the Hydro-Québec peak offer",
+                    "preheat_duration": "Set the preheating duration (in minutes)",
+                    "update_interval": "Set the refresh interval (in minutes)"
+                }
+            }
+        },
+        "abort": {
+            "already_configured": "Offer {offre} is already configured."
+        }
+    },
+    "exceptions": {
+        "rate_limit": {
+            "message": "The Hydro-Québec API rate limit has been reached. Please try again later."
+        },
+        "http_error": {
+            "message": "An error occurred while communicating with the Hydro-Québec API. HTTP error {status}."
+        },
+        "bad_json": {
+            "message": "An error occurred while parsing the Hydro-Québec API response. Please try again later."
+        }
+    }
+}
