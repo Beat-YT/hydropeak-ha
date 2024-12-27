@@ -5,10 +5,7 @@ HydroPeak is a Home Assistant integration designed to help you monitor Hydro-QuÃ
 ## How to Setup
 
 ### 1. Install the Extension
-- You can install the **HydroPeak** integration through **HACS** (Home Assistant Community Store) or manually.
-
-    **HACS Installation:**
-    - Navigate to **HACS** > **Integrations** > search for **HydroPeak** > click **Install**.
+- You can install the **HydroPeak** integration manually.
     
     **Manual Installation:**
     - Download the repository files and place them in the `custom_components/hydropeak` directory of your Home Assistant instance.
