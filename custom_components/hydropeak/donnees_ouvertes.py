@@ -65,7 +65,7 @@ async def fetch_events_json(offre_hydro):
     events = [event for event in evenements if event["offre"] == offre_hydro]
     for event in events:
         event["datedebut"] = datetime.fromisoformat(event["dateDebut"])
-        event["datefin"] = datetime.fromisoformat(event["dateDebut"])
+        event["datefin"] = datetime.fromisoformat(event["dateFin"])
         
     return sorted(events, key=lambda e: e["datedebut"])
 
