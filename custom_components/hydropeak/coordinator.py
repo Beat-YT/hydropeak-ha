@@ -27,8 +27,8 @@ class HydroPeakCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         try:
             listening_idx = set(self.async_contexts())
-            _LOGGER.debug(f"Listening Offres: {listening_idx}")
-            
+            _LOGGER.debug(f"Updating coordinator data, listeners: {listening_idx}")
+                        
             data = await fetch_events_json()
             _LOGGER.debug(f"Data: {data}")
             
