@@ -1,8 +1,8 @@
 {
     "domain": "hydropeak",
     "name": "Hydro-Peak",
-    "version": "1.2.0",
-    "documentation": "https://github.com/Beat-YT/hydropeak-ha",
+    "version": "1.2.1",
+    "documentation": "https://github.com/Beat-YT/hydropeak-ha/wiki",
     "issue_tracker": "https://github.com/Beat-YT/hydropeak-ha/issues",
     "integration_type": "service",
     "requirements": ["aiohttp"],
