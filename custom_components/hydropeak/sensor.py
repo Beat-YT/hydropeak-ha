@@ -68,24 +68,46 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
             entry_type=DeviceEntryType.SERVICE,
         )
         
+        
+    async def async_added_to_hass(self):
+        """Initial update from coordinator."""
+        await super().async_added_to_hass()
+        self.update_from_coordinator()
+        
+        
     @callback
     def _handle_coordinator_update(self):
         """Handle updated data from the coordinator."""
+        self.update_from_coordinator()
         
-        event = self.coordinator.data.get(self.offre_hydro)
-        
-        if event is None:
-            _LOGGER.debug(f"No data for {self.offre_hydro}")
+    def update_from_coordinator(self):
+        # events is a list of events for the offre
+        events = self.coordinator.data.get(self.offre_hydro)
+        if events is None or not events:
+            _LOGGER.debug(f"No events for {self.offre_hydro}")
             self.set_state(None)
             return
         
-        # Update the sensor state using the coordinator data, based on what sensor we are
+        # find an event that is in the future
+        
         if (self.sensor_id == "event_start"):
-            self.set_state(event["dateDebut"])
-        elif (self.sensor_id == "event_end"):
-            self.set_state(event["dateFin"])
+            next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
+            if next_event is None:
+                self.set_state(None)
+            else:
+                self.set_state(next_event["dateDebut"])
         elif (self.sensor_id == "preheat_start"):
-            self.set_state(event["dateDebut"] - timedelta(minutes=self.preheat_duration))
+            next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
+            if next_event is None:
+                self.set_state(None)
+            else:
+                self.set_state(next_event["dateDebut"] - timedelta(minutes=self.preheat_duration))
+        elif (self.sensor_id == "event_end"):
+            current_event = next((event for event in events if datetime.now(timezone.utc) < event["dateFin"]), None)
+            if current_event is None:
+                self.set_state(None)
+            else:
+                self.set_state(current_event.get("dateFin", None))
         else:
             raise HomeAssistantError(f"Updating unknown sensor_id: {self.sensor_id}")
         

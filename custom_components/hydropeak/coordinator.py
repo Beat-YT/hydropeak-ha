@@ -26,17 +26,13 @@ class HydroPeakCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         try:
-            offres = set(self.async_contexts())
-            _LOGGER.debug(f"Offres: {offres}")
+            listening_idx = set(self.async_contexts())
+            _LOGGER.debug(f"Listening Offres: {listening_idx}")
             
             data = await fetch_events_json()
-                                
-            # Filter data to only include events offres that are relevant to the listeners
-            # data = [event for event in data if event["offre"] in offres]
-            
             _LOGGER.debug(f"Data: {data}")
             
-            #group the data by offre, like in a object with the key being the offre
-            return {event["offre"]: event for event in data}
+            offres = set([event["offre"] for event in data])
+            return {offre: [event for event in data if event["offre"] == offre] for offre in offres}
         except Exception as err:
             raise UpdateFailed(f"Error updating coordinator data: {err}")

@@ -18,6 +18,7 @@ async def async_setup(hass, config):
     coordinator = HydroPeakCoordinator(hass)
     hass.data[DOMAIN]["coordinator"] = coordinator
     
+    await coordinator.async_refresh()
     return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
@@ -35,10 +36,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         return False
     
     await hass.config_entries.async_forward_entry_setups(entry, ["sensor", "binary_sensor"])
-    await coordinator.async_refresh()
     return True
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
+    offre = entry.data.get(CONF_OFFRE_HYDRO)
+    _LOGGER.debug("Unloading entry for %s", offre)
     await hass.config_entries.async_unload_platforms(entry, ["sensor", "binary_sensor"])
     return True

@@ -69,12 +69,21 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
             entry_type=DeviceEntryType.SERVICE,
         )
         
+    async def async_added_to_hass(self):
+        """Initial update from coordinator."""
+        await super().async_added_to_hass()
+        self.update_from_coordinator()
+        
     @callback
     def _handle_coordinator_update(self):
         """Handle updated data from the coordinator."""
+        self.update_from_coordinator()
         
-        event = self.coordinator.data.get(self.offre_hydro)
-        if event is None:
+    def update_from_coordinator(self):
+        """Update the state of the sensor."""        
+
+        events = self.coordinator.data.get(self.offre_hydro)
+        if events is None or not events:
             self._state = False
             self.async_write_ha_state()
             return
@@ -86,15 +95,20 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         
         now = datetime.now(timezone.utc)
         if (self.sensor_id == "peak_active"):
-            self._state = event.get("dateDebut", None) <= now <= event.get("dateFin", None)
+            event_active = next((event for event in events if event["dateDebut"] <= now <= event["dateFin"]), None)
+            self._state = event_active is not None
         elif (self.sensor_id == "peak_today_AM"):
-            self._state = event.get("plageHoraire", None) == "AM" and event.get("dateDebut", None).date() == now.date()
+            event_today_AM = next((event for event in events if event["plageHoraire"] == "AM" and event["dateDebut"].date() == now.date()), None)
+            self._state = event_today_AM is not None
         elif (self.sensor_id == "peak_tomorrow_AM"):
-            self._state = event.get("plageHoraire", None) == "AM" and event.get("dateDebut", None).date() == now.date() + timedelta(days=1)
+            event_tomorrow_AM = next((event for event in events if event["plageHoraire"] == "AM" and event["dateDebut"].date() == now.date() + timedelta(days=1)), None)
+            self._state = event_tomorrow_AM is not None
         elif (self.sensor_id == "peak_today_PM"):
-            self._state = event.get("plageHoraire", None) == "PM" and event.get("dateDebut", None).date() == now.date()
+            event_today_PM = next((event for event in events if event["plageHoraire"] == "PM" and event["dateDebut"].date() == now.date()), None)
+            self._state = event_today_PM is not None
         elif (self.sensor_id == "peak_tomorrow_PM"):
-            self._state = event.get("plageHoraire", None) == "PM" and event.get("dateDebut", None).date() == now.date() + timedelta(days=1)
+            event_tomorrow_PM = next((event for event in events if event["plageHoraire"] == "PM" and event["dateDebut"].date() == now.date() + timedelta(days=1)), None)
+            self._state = event_tomorrow_PM is not None
         else:
             raise HomeAssistantError(f"Updating unknown sensor_id: {self.sensor_id}")
             
