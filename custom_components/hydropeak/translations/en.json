@@ -13,6 +13,9 @@
         },
         "abort": {
             "already_configured": "Offer {offre} is already configured."
+        },
+        "error": {
+            "failed_to_obtain_offers": "Failed to obtain available offers. Please enter it manually."
         }
     },
     "exceptions": {

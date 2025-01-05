@@ -47,7 +47,7 @@ async def fetch_events(offre_hydro):
     ]
     return sorted(events, key=lambda e: e["datedebut"])
 
-async def fetch_events_json(offre_hydro):
+async def fetch_events_json():
     """Fetch events from Hydro JSON"""
     url = "https://donnees.solutions.hydroquebec.com/donnees-ouvertes/data/json/pointeshivernales.json"
     
@@ -60,9 +60,7 @@ async def fetch_events_json(offre_hydro):
                 _LOGGER.error("Error fetching json events: %s", e)
                 return []
     
-    evenements = data["evenements"]
-    
-    events = [event for event in evenements if event["offre"] == offre_hydro]
+    events = data["evenements"]
     for event in events:
         event["datedebut"] = datetime.fromisoformat(event["dateDebut"])
         event["datefin"] = datetime.fromisoformat(event["dateFin"])

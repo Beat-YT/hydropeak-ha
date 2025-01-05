@@ -13,6 +13,9 @@
         },
         "abort": {
             "already_configured": "L'offre {offre} est déjà configurée."
+        },
+        "error": {
+            "failed_to_obtain_offers": "Impossible d'obtenir les offres disponibles. Veuillez l'entrer manuellement."
         }
     },
     "exceptions": {

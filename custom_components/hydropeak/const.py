@@ -11,4 +11,5 @@ DEFAULT_UPDATE_INTERVAL = 60
 OFFRES_DESCRIPTION = {
     "CPC-D": "CPC-D (Winter Credit Residential)",
     "TPC-DPC": "TPC-DPC (Flex D)",
+    "OEA": "OEA (option d’électricité additionnelle)",
 }

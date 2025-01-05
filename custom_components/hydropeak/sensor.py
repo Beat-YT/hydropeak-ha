@@ -4,100 +4,119 @@ import aiohttp
 import logging
 
 from .donnees_ouvertes import fetch_events, fetch_events_json
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
 
+from homeassistant.core import callback
 from homeassistant.const import EntityCategory
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 _LOGGER = logging.getLogger(__name__)
 
 SENSORS = {
     "event_start": {
-        "name": "Event Begin",
-        "icon": "mdi:clock-start",
+        "name": "Next Event Begin",
+        "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
     "event_end": {
-        "name": "Event End",
-        "icon": "mdi:clock-end",
+        "name": "Next Event End",
+        "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
     "preheat_start": {
-        "name": "Preheat Start",
-        "icon": "mdi:clock-start",
+        "name": "Next Preheat Start",
+        "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
 }
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up HydroPeak sensors from a config entry."""
-    _LOGGER.debug("Setting up HydroPeak Sensors")
     
-    settings = entry.data
-    offre_hydro = settings[CONF_OFFRE_HYDRO]
-    preheat_duration = settings.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
-    update_interval = settings.get(CONF_UPDATE_INTERVAL, DEFAULT_UPDATE_INTERVAL)
+    offre_hydro = entry.data[CONF_OFFRE_HYDRO]
+    preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
+    _LOGGER.debug("Adding HydroPeak Sensors for %s", offre_hydro)
     
-    sensors = [HydroPeakSensor(sensor_id, details, entry.entry_id, offre_hydro) for sensor_id, details in SENSORS.items()]
-    async_add_entities(sensors)
-    asyncio.create_task(update_sensors(sensors, offre_hydro, update_interval, preheat_duration))    
+    coordinator = hass.data[DOMAIN]['coordinator']
+    
+    async_add_entities(
+        HydroPeakSensor(coordinator, sensor_id, details, offre_hydro, preheat_duration) for sensor_id, details in SENSORS.items()
+    )
 
-async def update_sensors(sensors, offre_hydro, update_interval, preheat_duration):
-    """Update sensor states."""
-    peak_start_sensor = next((s for s in sensors if s.sensor_id == "event_start"), None)
-    peak_end_sensor = next((s for s in sensors if s.sensor_id == "event_end"), None)
-    preheat_sensor = next((s for s in sensors if s.sensor_id == "preheat_start"), None)
-    
-    while True:
-        _LOGGER.debug("Updating HydroPeak sensors")
-        events = await fetch_events(offre_hydro)
-        now = datetime.now(timezone.utc)
-        
-        # Determine current and next events
-        current_event = next((e for e in events if e["datedebut"] <= now <= e["datefin"]), None)
-        next_event = next((e for e in events if e["datedebut"] > now), None)
-        
-        if not current_event and not next_event:
-            _LOGGER.debug("No events found") 
-            peak_start_sensor.set_state(None)
-            peak_end_sensor.set_state(None)
-            preheat_sensor.set_state(None)
-            continue
-        
-        if next_event:
-            _LOGGER.debug(f"Next event: {next_event['datedebut']} - {next_event['datefin']}")
-            peak_start_sensor.set_state(next_event["datedebut"])
-            preheat_sensor.set_state(next_event["datedebut"] - timedelta(minutes=preheat_duration))
-        
-        if current_event:
-            _LOGGER.debug(f"Current event: {current_event['datedebut']} - {current_event['datefin']}")
-            peak_end_sensor.set_state(current_event["datefin"])
-        elif next_event:
-            peak_end_sensor.set_state(next_event["datefin"])
-            
-        await asyncio.sleep(update_interval * 60)
-
-class HydroPeakSensor(SensorEntity):
+class HydroPeakSensor(CoordinatorEntity, SensorEntity):
     """Representation of a HydroPeak Sensor."""
 
-    def __init__(self, sensor_id, details, entry_id, offre_hydro):
+    def __init__(self, coordinator, sensor_id, details, offre_hydro, preheat_duration):
+        
+        # Subscribe to the coordinator for updates
+        super().__init__(coordinator, context=offre_hydro)
+        self.offre_hydro = offre_hydro
+        
+        if sensor_id == "preheat_start":
+            self.preheat_duration = preheat_duration
+        
+        self._state = None
         self.sensor_id = sensor_id
+        self.unique_id = f"{offre_hydro}_{sensor_id}"
         self.name = details["name"]
         self.icon = details["icon"]
         self.device_class = details["device_class"]
-        self.unique_id = f"{offre_hydro}_{sensor_id}"
-        self.entity_category = EntityCategory.DIAGNOSTIC  # Set to DIAGNOSTIC
         self.device_info = DeviceInfo(
             name=offre_hydro,
-            model=f"Offre {offre_hydro}",
-            identifiers={(DOMAIN, entry_id)},
+            model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
+            identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
         )
-        self._state = None
+        
+    @callback
+    def _handle_coordinator_update(self):
+        """Handle updated data from the coordinator."""
+        
+        event = self.coordinator.data.get(self.offre_hydro)
+        
+        if event is None:
+            _LOGGER.debug(f"No data for {self.offre_hydro}")
+            self.set_state(None)
+            return
+        
+        # Update the sensor state using the coordinator data, based on what sensor we are
+        if (self.sensor_id == "event_start"):
+            self.set_state(event["datedebut"])
+        elif (self.sensor_id == "event_end"):
+            self.set_state(event["datefin"])
+        elif (self.sensor_id == "preheat_start"):
+            self.set_state(event["datedebut"] - timedelta(minutes=self.preheat_duration))
+        elif (self.sensor_id == "peak_today"):
+            # check if the event is today using the datedebut
+            event_start = event["datedebut"]
+            now = datetime.now(timezone.utc)
+            
+            if event_start.date() == now.date():
+                self.set_state(event_start)
+            elif event_start.date() < now.date():
+                self.set_state(None)
+        else:
+            raise HomeAssistantError(f"Updating unknown sensor_id: {self.sensor_id}")
+        
+        _LOGGER.debug(f"Updated {self.offre_hydro} {self.sensor_id} to {self._state}")
+        
+    @property
+    def state(self):
+        return self._state
 
     def set_state(self, new_state):
         """Set the sensor state."""
-        self._state = new_state.isoformat() if isinstance(new_state, datetime) else None
+        
+        if isinstance(new_state, datetime):
+            new_state_str = new_state.isoformat()
+        else:
+            new_state_str = new_state
+        
+        if new_state_str == self._state:
+            return
+        
+        self._state = new_state_str
         self.async_write_ha_state()

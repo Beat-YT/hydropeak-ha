@@ -25,23 +25,16 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             
             return self.async_create_entry(title=user_input[CONF_OFFRE_HYDRO], data=user_input)
         
-        available_offers = None
         errors = {}
-                
         try:
             available_offers = await fetch_available_offers()
+            offers_with_descriptions = {offer: OFFRES_DESCRIPTION.get(offer, offer) for offer in available_offers}
         except Exception as e:
-            errors["base"] = f"Failed to obtain available offers: {e}"
-            
-        offers_with_descriptions = {}
-        if available_offers:
-            for offer in available_offers:
-                description = OFFRES_DESCRIPTION.get(offer, offer)
-                offers_with_descriptions[offer] = description
-            sorted_offers = {key: value for key, value in sorted(offers_with_descriptions.items(), key=lambda item: item[1] != "")}
-
+            errors["base"] = "failed_to_obtain_offers"
+            offers_with_descriptions = {}
+        
         schema = vol.Schema({
-            vol.Required(CONF_OFFRE_HYDRO): vol.In(offers_with_descriptions) if available_offers else str,
+            vol.Required(CONF_OFFRE_HYDRO): vol.In(offers_with_descriptions) if offers_with_descriptions else str,
             vol.Required(CONF_PREHEAT_DURATION, default=DEFAULT_PREHEAT_DURATION): int,
         })
         
@@ -51,6 +44,8 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             description_placeholders={
                 "offre_hydro": "offre_hydro",
                 "preheat_duration": "preheat_duration",
+                "test": "offre_hydro"
             },
-            errors=errors
+            errors=errors,
+            
         )
