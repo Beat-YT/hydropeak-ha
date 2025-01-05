@@ -40,12 +40,16 @@ async def fetch_events(offre_hydro):
 
     events = [
         {
-            "datedebut": datetime.fromisoformat(record["datedebut"]),
-            "datefin": datetime.fromisoformat(record["datefin"]),
+            "offre": record["offre"],
+            "dateDebut": datetime.fromisoformat(record["datedebut"]),
+            "dateFin": datetime.fromisoformat(record["datefin"]),
+            "plageHoraire": record["plagehoraire"],
+            "duree": record["duree"],
+            "secteurClient": record["secteurclient"],
         }
         for record in data["results"]
     ]
-    return sorted(events, key=lambda e: e["datedebut"])
+    return sorted(events, key=lambda e: e["dateDebut"])
 
 async def fetch_events_json():
     """Fetch events from Hydro JSON"""
@@ -62,10 +66,10 @@ async def fetch_events_json():
     
     events = data["evenements"]
     for event in events:
-        event["datedebut"] = datetime.fromisoformat(event["dateDebut"])
-        event["datefin"] = datetime.fromisoformat(event["dateFin"])
+        event["dateDebut"] = datetime.fromisoformat(event["dateDebut"])
+        event["dateFin"] = datetime.fromisoformat(event["dateFin"])
         
-    return sorted(events, key=lambda e: e["datedebut"])
+    return sorted(events, key=lambda e: e["dateDebut"])
 
 
 async def fetch_available_offers():

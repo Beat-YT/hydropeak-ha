@@ -38,10 +38,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
     
     offre_hydro = entry.data[CONF_OFFRE_HYDRO]
     preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
-    _LOGGER.debug("Adding HydroPeak Sensors for %s", offre_hydro)
-    
     coordinator = hass.data[DOMAIN]['coordinator']
     
+    _LOGGER.debug("Adding Sensors for %s", offre_hydro)
     async_add_entities(
         HydroPeakSensor(coordinator, sensor_id, details, offre_hydro, preheat_duration) for sensor_id, details in SENSORS.items()
     )
@@ -50,15 +49,13 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
     """Representation of a HydroPeak Sensor."""
 
     def __init__(self, coordinator, sensor_id, details, offre_hydro, preheat_duration):
-        
-        # Subscribe to the coordinator for updates
         super().__init__(coordinator, context=offre_hydro)
-        self.offre_hydro = offre_hydro
         
         if sensor_id == "preheat_start":
             self.preheat_duration = preheat_duration
         
         self._state = None
+        self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
         self.unique_id = f"{offre_hydro}_{sensor_id}"
         self.name = details["name"]
@@ -84,20 +81,11 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         
         # Update the sensor state using the coordinator data, based on what sensor we are
         if (self.sensor_id == "event_start"):
-            self.set_state(event["datedebut"])
+            self.set_state(event["dateDebut"])
         elif (self.sensor_id == "event_end"):
-            self.set_state(event["datefin"])
+            self.set_state(event["dateFin"])
         elif (self.sensor_id == "preheat_start"):
-            self.set_state(event["datedebut"] - timedelta(minutes=self.preheat_duration))
-        elif (self.sensor_id == "peak_today"):
-            # check if the event is today using the datedebut
-            event_start = event["datedebut"]
-            now = datetime.now(timezone.utc)
-            
-            if event_start.date() == now.date():
-                self.set_state(event_start)
-            elif event_start.date() < now.date():
-                self.set_state(None)
+            self.set_state(event["dateDebut"] - timedelta(minutes=self.preheat_duration))
         else:
             raise HomeAssistantError(f"Updating unknown sensor_id: {self.sensor_id}")
         
