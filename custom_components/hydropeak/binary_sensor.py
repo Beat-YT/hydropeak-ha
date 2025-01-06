@@ -59,7 +59,6 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         if sensor_id == "preheat_active":
             self.preheat_duration = preheat_duration
             
-        self.next_change = None
         self._state = False
         self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
@@ -100,6 +99,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         
         now = datetime.now()
         if (self.sensor_id == "peak_active"):
+            now = datetime.now(timezone.utc)
             event_active = next((event for event in events if event["dateDebut"] <= now <= event["dateFin"]), None)
             self._state = event_active is not None
         elif (self.sensor_id == "peak_today_AM"):
@@ -115,6 +115,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
             event_tomorrow_PM = next((event for event in events if event["plageHoraire"] == "PM" and event["dateDebut"].date() == now.date() + timedelta(days=1)), None)
             self._state = event_tomorrow_PM is not None
         elif (self.sensor_id == "preheat_active"):
+            now = datetime.now(timezone.utc)
             preheat_duration = timedelta(minutes=self.preheat_duration)
             next_event = next((event for event in events if event["dateDebut"] > now), None)
             if next_event:
