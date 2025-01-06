@@ -98,7 +98,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         # - dateFin (timestamp)
         # - plageHoraire (AM/PM)
         
-        now = datetime.now(timezone.utc)
+        now = datetime.now()
         if (self.sensor_id == "peak_active"):
             event_active = next((event for event in events if event["dateDebut"] <= now <= event["dateFin"]), None)
             self._state = event_active is not None
