@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 from .donnees_ouvertes import fetch_events, fetch_events_json
+from .const import DEFAULT_UPDATE_INTERVAL
 
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import (
@@ -17,7 +18,7 @@ class HydroPeakCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name="Peak Event Data",
-            update_interval=timedelta(hours=1),
+            update_interval=timedelta(minutes=DEFAULT_UPDATE_INTERVAL),
             # Set always_update to `False` if the data returned from the
             # api can be compared via `__eq__` to avoid duplicate updates
             # being dispatched to listeners
