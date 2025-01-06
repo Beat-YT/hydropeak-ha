@@ -17,24 +17,24 @@ _LOGGER = logging.getLogger(__name__)
 
 BINARY_SENSORS = {
     "peak_active": {
-        "name": "Cricital Peak in progress",
+        "name": "Peak in progress",
+        "icon": "mdi:flash-alert"
+    },
+    "preheat_active": {
+        "name": "Preheat in Progress",
         "icon": "mdi:flash-alert"
     },
     "peak_today_AM": {
         "name": "Morning Peak Today",
-        "icon": "mdi:message-flash"
     },
     "peak_tomorrow_AM": {
         "name": "Morning Peak Tomorrow",
-        "icon": "mdi:message-flash"
     },
     "peak_today_PM": {
         "name": "Evening Peak Today",
-        "icon": "mdi:message-flash"
     },
     "peak_tomorrow_PM": {
         "name": "Evening Peak Tomorrow",
-        "icon": "mdi:message-flash"
     },
 }
 
@@ -42,25 +42,30 @@ async def async_setup_entry(hass, entry, async_add_entities):
     """Set up binary sensors."""
     
     offre_hydro = entry.data[CONF_OFFRE_HYDRO]
+    preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
     coordinator = hass.data[DOMAIN]['coordinator']
     
     _LOGGER.debug("Adding Binary Sensors for %s", offre_hydro)
     async_add_entities(
-        PeakBinarySensor(coordinator, sensor_id, details, offre_hydro) for sensor_id, details in BINARY_SENSORS.items()
+        PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
     )
     
 class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """Representation of a peak binary sensor."""
 
-    def __init__(self, coordinator, sensor_id, details, offre_hydro):
+    def __init__(self, coordinator, sensor_id, details, offre_hydro, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
         
+        if sensor_id == "preheat_active":
+            self.preheat_duration = preheat_duration
+            
+        self.next_change = None
         self._state = False
         self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
         self.unique_id = f"{offre_hydro}_{sensor_id}"
-        self.name = details["name"]
-        self.icon = details["icon"]
+        self.name = details.get("name")
+        self.icon = details.get("icon")
         self.entity_category = EntityCategory.DIAGNOSTIC
         self.device_info = DeviceInfo(
             name=offre_hydro,
@@ -89,8 +94,8 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
             return
         
         # Using the following keys from the event:
-        # - datedebut (timestamp)
-        # - datefin (timestamp)
+        # - dateDebut (timestamp)
+        # - dateFin (timestamp)
         # - plageHoraire (AM/PM)
         
         now = datetime.now(timezone.utc)
@@ -109,11 +114,21 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         elif (self.sensor_id == "peak_tomorrow_PM"):
             event_tomorrow_PM = next((event for event in events if event["plageHoraire"] == "PM" and event["dateDebut"].date() == now.date() + timedelta(days=1)), None)
             self._state = event_tomorrow_PM is not None
+        elif (self.sensor_id == "preheat_active"):
+            preheat_duration = timedelta(minutes=self.preheat_duration)
+            next_event = next((event for event in events if event["dateDebut"] > now), None)
+            if next_event:
+                preheat_start_time = next_event["dateDebut"] - preheat_duration
+                self._state = preheat_start_time <= now < next_event["dateDebut"]
+            else:
+                self._state = False
         else:
-            raise HomeAssistantError(f"Updating unknown sensor_id: {self.sensor_id}")
-            
+            raise ValueError(f"Updating unknown sensor_id: {self.sensor_id}")
+        
         _LOGGER.debug(f"Updated {self.offre_hydro} {self.sensor_id} to {self._state}")
         self.async_write_ha_state()
+        
+    
         
     @property
     def is_on(self):
@@ -122,7 +137,4 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     
     @property
     def available(self):
-        if self.sensor_id == "peak_active":
-            return True
-        
-        return self._state is True
+        return True

@@ -6,8 +6,14 @@
                 "description": "Configurez votre intégration des événements de pointe d'Hydro-Québec.",
                 "data": {
                     "offre_hydro": "Choisissez l'offre d'Hydro-Québec",
-                    "preheat_duration": "Durée de préchauffage (en minutes)",
-                    "update_interval": "Intervalle de mise à jour (en minutes)"
+                    "preheat_duration": "Durée de préchauffage (en minutes)"
+                }
+            },
+            "init": {
+                "title": "Configuration de HydroPeak",
+                "description": "Configurez votre intégration des événements de pointe d'Hydro-Québec.",
+                "data": {
+                    "preheat_duration": "Durée de préchauffage (en minutes)"
                 }
             }
         },
@@ -16,6 +22,17 @@
         },
         "error": {
             "failed_to_obtain_offers": "Impossible d'obtenir les offres disponibles. Veuillez l'entrer manuellement."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Configuration de HydroPeak",
+                "description": "Configurez votre intégration des événements de pointe d'Hydro-Québec.",
+                "data": {
+                    "preheat_duration": "Durée de préchauffage (en minutes)"
+                }
+            }
         }
     },
     "exceptions": {

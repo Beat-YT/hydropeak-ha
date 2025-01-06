@@ -3,12 +3,17 @@
         "step": {
             "user": {
                 "title": "HydroPeak Configuration",
-                "description": "Configure your Hydro-Québec peak events integration.",
+                "description": "Configure Hydro-Québec peak events integration",
                 "data": {
                     "offre_hydro": "Choose the Hydro-Québec peak offer",
-                    "preheat_duration": "Set the preheating duration (in minutes)",
-                    "update_interval": "Set the refresh interval (in minutes)"
+                    "preheat_duration": "Set the preheating duration (in minutes)"
                 }
+            },
+            "init": {
+                "data": {
+                    "preheat_duration": "Durée de préchauffage"
+                },
+                "description": "Définissez la durée de préchauffage en minutes."
             }
         },
         "abort": {
@@ -16,6 +21,17 @@
         },
         "error": {
             "failed_to_obtain_offers": "Failed to obtain available offers. Please enter it manually."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "HydroPeak Configuration",
+                "description": "Configure Hydro-Québec peak events integration",
+                "data": {
+                    "preheat_duration": "Set the preheating duration (in minutes)"
+                }
+            }
         }
     },
     "exceptions": {

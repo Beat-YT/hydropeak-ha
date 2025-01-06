@@ -41,11 +41,39 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="user",
             data_schema=schema,
-            description_placeholders={
-                "offre_hydro": "offre_hydro",
-                "preheat_duration": "preheat_duration",
-                "test": "offre_hydro"
-            },
-            errors=errors,
+            errors=errors
+        )
+        
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        return OptionsFlowHandler(config_entry)
+
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Options flow for HydroPeak."""
+    
+    def __init__(self, config_entry):
+        """Set config entry for backwards compatibility."""
+        if not hasattr(self, "config_entry"):
+            self.config_entry = config_entry
             
+    async def async_step_init(self, user_input=None):
+        """Handle the option menu."""
+        if user_input is not None:
+            self.hass.config_entries.async_update_entry(
+                self.config_entry,
+                data={ **self.config_entry.data, CONF_PREHEAT_DURATION: user_input[CONF_PREHEAT_DURATION] }
+            )
+            return self.async_create_entry(title="", data=user_input)
+        
+        preheat_duration = self.config_entry.options.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({
+                vol.Required(CONF_PREHEAT_DURATION, default=preheat_duration): int,
+            }),
+            description_placeholders={
+                preheat_duration: "preheat_duration"
+            }
         )
