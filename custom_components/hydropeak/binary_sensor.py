@@ -86,6 +86,11 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         """Handle updated data from the coordinator."""
         self.update_from_coordinator()
         
+    @callback
+    def _handle_time_update(self, now):
+        """Handle time-based updates."""
+        self.update_from_coordinator()
+        
     def update_from_coordinator(self):
         """Update the state of the sensor."""        
 
@@ -141,6 +146,8 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         _LOGGER.debug(f"Updated {self.offre_hydro} {self.sensor_id} to {self._state}")
         self.async_write_ha_state()
         
+    def update_
+        
     def schedule_next_update(self, next_update_time):
         """Set the next update time."""
         if self.next_update_time is None or next_update_time < self.next_update_time:
@@ -149,7 +156,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
             self.next_update_time = next_update_time
             _LOGGER.debug(f"Next update for {self.offre_hydro} {self.sensor_id} at {self.next_update_time}")
             self._unsub_next_update = async_track_point_in_utc_time(
-                self.hass, self._handle_coordinator_update, next_update_time
+                self.hass, self._handle_time_update, next_update_time
             )
             
     @property
