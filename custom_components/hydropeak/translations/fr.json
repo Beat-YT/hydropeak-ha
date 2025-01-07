@@ -8,13 +8,6 @@
                     "offre_hydro": "Choisissez l'offre d'Hydro-Québec",
                     "preheat_duration": "Durée de préchauffage (en minutes)"
                 }
-            },
-            "init": {
-                "title": "Configuration de HydroPeak",
-                "description": "Configurez votre intégration des événements de pointe d'Hydro-Québec.",
-                "data": {
-                    "preheat_duration": "Durée de préchauffage (en minutes)"
-                }
             }
         },
         "abort": {

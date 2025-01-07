@@ -12,6 +12,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.event import async_track_point_in_utc_time
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -59,6 +60,8 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         if sensor_id == "preheat_active":
             self.preheat_duration = preheat_duration
             
+        self.next_update_time = None
+        self._unsub_next_update = None
         self._state = False
         self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
@@ -101,7 +104,12 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         if (self.sensor_id == "peak_active"):
             now = datetime.now(timezone.utc)
             event_active = next((event for event in events if event["dateDebut"] <= now <= event["dateFin"]), None)
+            next_event = next((event for event in events if event["dateDebut"] > now), None)
             self._state = event_active is not None
+            if event_active:
+                self.schedule_next_update(event_active["dateFin"])
+            elif next_event:
+                self.schedule_next_update(next_event["dateDebut"])
         elif (self.sensor_id == "peak_today_AM"):
             event_today_AM = next((event for event in events if event["plageHoraire"] == "AM" and event["dateDebut"].date() == now.date()), None)
             self._state = event_today_AM is not None
@@ -121,6 +129,10 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
             if next_event:
                 preheat_start_time = next_event["dateDebut"] - preheat_duration
                 self._state = preheat_start_time <= now < next_event["dateDebut"]
+                if self._state:
+                    self.schedule_next_update(next_event["dateDebut"])
+                else:
+                    self.schedule_next_update(preheat_start_time)
             else:
                 self._state = False
         else:
@@ -129,8 +141,17 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         _LOGGER.debug(f"Updated {self.offre_hydro} {self.sensor_id} to {self._state}")
         self.async_write_ha_state()
         
-    
-        
+    def schedule_next_update(self, next_update_time):
+        """Set the next update time."""
+        if self.next_update_time is None or next_update_time < self.next_update_time:
+            if self._unsub_next_update:
+                self._unsub_next_update()
+            self.next_update_time = next_update_time
+            _LOGGER.debug(f"Next update for {self.offre_hydro} {self.sensor_id} at {self.next_update_time}")
+            self._unsub_next_update = async_track_point_in_utc_time(
+                self.hass, self._handle_coordinator_update, next_update_time
+            )
+            
     @property
     def is_on(self):
         """Return the state of the sensor."""

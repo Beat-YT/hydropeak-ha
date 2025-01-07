@@ -19,9 +19,6 @@ class HydroPeakCoordinator(DataUpdateCoordinator):
             _LOGGER,
             name="Peak Event Data",
             update_interval=timedelta(minutes=DEFAULT_UPDATE_INTERVAL),
-            # Set always_update to `False` if the data returned from the
-            # api can be compared via `__eq__` to avoid duplicate updates
-            # being dispatched to listeners
             always_update=True
         )
 

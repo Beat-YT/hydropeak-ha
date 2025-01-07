@@ -4,7 +4,7 @@ import aiohttp
 import logging
 
 from .donnees_ouvertes import fetch_events, fetch_events_json
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, DEFAULT_ANCHOR_OFFSET, DEFAULT_ANCHOR_DURATION, OFFRES_DESCRIPTION
 
 from homeassistant.core import callback
 from homeassistant.const import EntityCategory
@@ -31,6 +31,16 @@ SENSORS = {
         "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
+    "anchor_start": {
+        "name": "Next Anchor Start",
+        "icon": "mdi:home-clock",
+        "device_class": SensorDeviceClass.TIMESTAMP,
+    },
+    "anchor_end": {
+        "name": "Next Anchor End",
+        "icon": "mdi:home-clock",
+        "device_class": SensorDeviceClass.TIMESTAMP,
+    },
 }
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -41,8 +51,13 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN]['coordinator']
     
     _LOGGER.debug("Adding Sensors for %s", offre_hydro)
+    is_CPC = offre_hydro.startswith("CPC")
+    
+    # only add the anchor sensors for CPC offers
     async_add_entities(
-        HydroPeakSensor(coordinator, sensor_id, details, offre_hydro, preheat_duration) for sensor_id, details in SENSORS.items()
+        HydroPeakSensor(coordinator, sensor_id, details, offre_hydro, preheat_duration)
+        for sensor_id, details in SENSORS.items()
+        if is_CPC or not sensor_id.startswith("anchor")
     )
 
 class HydroPeakSensor(CoordinatorEntity, SensorEntity):
@@ -92,22 +107,25 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         
         if (self.sensor_id == "event_start"):
             next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
-            if next_event is None:
-                self.set_state(None)
-            else:
+            if next_event:
                 self.set_state(next_event["dateDebut"])
         elif (self.sensor_id == "preheat_start"):
             next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
-            if next_event is None:
-                self.set_state(None)
-            else:
+            if next_event:
                 self.set_state(next_event["dateDebut"] - timedelta(minutes=self.preheat_duration))
         elif (self.sensor_id == "event_end"):
             current_event = next((event for event in events if datetime.now(timezone.utc) < event["dateFin"]), None)
-            if current_event is None:
-                self.set_state(None)
-            else:
+            if current_event:
                 self.set_state(current_event.get("dateFin", None))
+        elif (self.sensor_id == "anchor_start"):
+            next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
+            if next_event:
+                self.set_state(next_event["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET))
+        elif (self.sensor_id == "anchor_end"):
+            next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
+            if next_event:
+                anchor_start = next_event["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET)
+                self.set_state(anchor_start + timedelta(minutes=DEFAULT_ANCHOR_DURATION))
         else:
             raise HomeAssistantError(f"Updating unknown sensor_id: {self.sensor_id}")
         
@@ -119,14 +137,10 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
 
     def set_state(self, new_state):
         """Set the sensor state."""
-        
+                
         if isinstance(new_state, datetime):
-            new_state_str = new_state.isoformat()
+            self._state = new_state.isoformat()
         else:
-            new_state_str = new_state
+            self._state = new_state
         
-        if new_state_str == self._state:
-            return
-        
-        self._state = new_state_str
         self.async_write_ha_state()

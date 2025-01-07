@@ -8,12 +8,6 @@
                     "offre_hydro": "Choose the Hydro-Québec peak offer",
                     "preheat_duration": "Set the preheating duration (in minutes)"
                 }
-            },
-            "init": {
-                "data": {
-                    "preheat_duration": "Durée de préchauffage"
-                },
-                "description": "Définissez la durée de préchauffage en minutes."
             }
         },
         "abort": {
