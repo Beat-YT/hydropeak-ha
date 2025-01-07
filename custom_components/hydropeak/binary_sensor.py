@@ -145,9 +145,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         
         _LOGGER.debug(f"Updated {self.offre_hydro} {self.sensor_id} to {self._state}")
         self.async_write_ha_state()
-        
-    def update_
-        
+                
     def schedule_next_update(self, next_update_time):
         """Set the next update time."""
         if self.next_update_time is None or next_update_time < self.next_update_time:
