@@ -65,7 +65,7 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
 
     def __init__(self, coordinator, sensor_id, details, offre_hydro, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
-        
+
         if sensor_id == "preheat_start":
             self.preheat_duration = preheat_duration
         
@@ -85,7 +85,6 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         
         
     async def async_added_to_hass(self):
-        """Initial update from coordinator."""
         await super().async_added_to_hass()
         self.update_from_coordinator()
         
@@ -96,38 +95,38 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         self.update_from_coordinator()
         
     def update_from_coordinator(self):
-        # events is a list of events for the offre
+        """Update the state of the sensor."""
         events = self.coordinator.data.get(self.offre_hydro)
         if events is None or not events:
             _LOGGER.debug(f"No events for {self.offre_hydro}")
             self.set_state(None)
             return
         
-        # find an event that is in the future
+        evenement = next(
+            (event for event in events if event["dateDebut"] <= datetime.now(timezone.utc) <= event["dateFin"]),
+            next((event for event in events if event["dateDebut"] >= datetime.now(timezone.utc)), None)
+        )
         
-        if (self.sensor_id == "event_start"):
-            next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
-            if next_event:
-                self.set_state(next_event["dateDebut"])
-        elif (self.sensor_id == "preheat_start"):
-            next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
-            if next_event:
-                self.set_state(next_event["dateDebut"] - timedelta(minutes=self.preheat_duration))
-        elif (self.sensor_id == "event_end"):
-            current_event = next((event for event in events if datetime.now(timezone.utc) < event["dateFin"]), None)
-            if current_event:
-                self.set_state(current_event.get("dateFin", None))
-        elif (self.sensor_id == "anchor_start"):
-            next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
-            if next_event:
-                self.set_state(next_event["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET))
-        elif (self.sensor_id == "anchor_end"):
-            next_event = next((event for event in events if event["dateDebut"] > datetime.now(timezone.utc)), None)
-            if next_event:
-                anchor_start = next_event["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET)
-                self.set_state(anchor_start + timedelta(minutes=DEFAULT_ANCHOR_DURATION))
+        if evenement is None:
+            _LOGGER.debug(f"No event for {self.offre_hydro}")
+            self.set_state(None)
+            return
+        
+        if self.sensor_id == "event_start":
+            self.set_state(evenement["dateDebut"])
+        elif self.sensor_id == "event_end":
+            self.set_state(evenement["dateFin"])
+        elif self.sensor_id == "preheat_start":
+            preheat_start = evenement["dateDebut"] - timedelta(minutes=self.preheat_duration)
+            self.set_state(preheat_start)
+        elif self.sensor_id == "anchor_start":
+            anchor_start = evenement["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET)
+            self.set_state(anchor_start)
+        elif self.sensor_id == "anchor_end":
+            anchor_end = evenement["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET - DEFAULT_ANCHOR_DURATION)
+            self.set_state(anchor_end)
         else:
-            raise HomeAssistantError(f"Updating unknown sensor_id: {self.sensor_id}")
+            raise ValueError(f"Unknown sensor_id: {self.sensor_id}")
         
         _LOGGER.debug(f"Updated {self.offre_hydro} {self.sensor_id} to {self._state}")
         
@@ -137,7 +136,6 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
 
     def set_state(self, new_state):
         """Set the sensor state."""
-                
         if isinstance(new_state, datetime):
             self._state = new_state.isoformat()
         else:
