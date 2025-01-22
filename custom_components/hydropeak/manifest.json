@@ -1,14 +1,14 @@
 {
     "domain": "hydropeak",
     "name": "Hydro-Peak",
-    "version": "1.3.0",
-    "documentation": "https://github.com/Beat-YT/hydropeak-ha/wiki",
-    "issue_tracker": "https://github.com/Beat-YT/hydropeak-ha/issues",
-    "integration_type": "service",
-    "requirements": ["aiohttp"],
-    "iot_class": "cloud_polling",
-    "config_flow": true,
     "codeowners": [
         "@Beat-YT"
-    ]
+    ],
+    "config_flow": true,
+    "documentation": "https://github.com/Beat-YT/hydropeak-ha/wiki",
+    "integration_type": "service",
+    "iot_class": "cloud_polling",
+    "issue_tracker": "https://github.com/Beat-YT/hydropeak-ha/issues",
+    "requirements": ["aiohttp"],
+    "version": "1.3.0"
 }
