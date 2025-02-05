@@ -32,7 +32,7 @@ SENSORS = {
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
     "anchor_start": {
-        "name": "Next Anchor Start",
+        "name": "Next Anchor Begin",
         "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
