@@ -1,6 +1,6 @@
 import logging
 from datetime import timedelta
-from .donnees_ouvertes import fetch_events, fetch_events_json
+from .donnees_ouvertes import fetch_events_json
 from .const import DEFAULT_UPDATE_INTERVAL
 
 from homeassistant.exceptions import ConfigEntryAuthFailed

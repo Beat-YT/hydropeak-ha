@@ -2,7 +2,7 @@ from homeassistant import config_entries
 from homeassistant.core import callback
 import voluptuous as vol
 
-from .donnees_ouvertes import fetch_available_offers
+from .donnees_ouvertes import fetch_available_offers, fetch_offers_descriptions
 from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
 
 class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -28,7 +28,14 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
         try:
             available_offers = await fetch_available_offers()
-            offers_with_descriptions = {offer: OFFRES_DESCRIPTION.get(offer, offer) for offer in available_offers}
+
+            # array of objects:
+            # key: offresdisponibles, value: description_fr
+            offers_descriptions = await fetch_offers_descriptions()
+
+            # map offers_descriptions by key for easy lookup
+            descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
+            offers_with_descriptions = {offer: descriptions_map[offer]["description_fr"] for offer in available_offers}
         except Exception as e:
             errors["base"] = "failed_to_obtain_offers"
             offers_with_descriptions = {}
@@ -52,11 +59,6 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Options flow for HydroPeak."""
-    
-    def __init__(self, config_entry):
-        """Set config entry for backwards compatibility."""
-        if not hasattr(self, "config_entry"):
-            self.config_entry = config_entry
             
     async def async_step_init(self, user_input=None):
         """Handle the option menu."""

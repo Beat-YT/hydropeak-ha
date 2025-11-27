@@ -1,9 +1,6 @@
 from datetime import datetime, timedelta, timezone
-import asyncio
-import aiohttp
 import logging
 
-from .donnees_ouvertes import fetch_events, fetch_events_json
 from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
 
 from homeassistant.core import callback
