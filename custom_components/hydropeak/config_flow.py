@@ -38,7 +38,12 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             # map offers_descriptions by key for easy lookup
             descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
-            offers_with_descriptions = {offer: offer + " " + descriptions_map.get(offer, {}).get("description_fr", offer).split('\n', 1)[0] for offer in available_offers}
+            offers_with_descriptions = {}
+            for offer in available_offers:
+                description_fr = descriptions_map.get(offer, {}).get("description_fr", "")
+                description_short = description_fr.split('\n', 1)[0] if description_fr else ""
+                label = f"{offer} ({description_short})" if description_short else offer
+                offers_with_descriptions[offer] = label
         except Exception as e:
             _LOGGER.error("Error obtaining offers: %s", e)
             errors["base"] = "failed_to_obtain_offers"
