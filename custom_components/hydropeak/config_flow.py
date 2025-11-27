@@ -1,9 +1,12 @@
 from homeassistant import config_entries
 from homeassistant.core import callback
 import voluptuous as vol
+import logging
 
-from .donnees_ouvertes import fetch_available_offers
+from .donnees_ouvertes import fetch_available_offers, fetch_offers_descriptions
 from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
+
+_LOGGER = logging.getLogger(__name__)
 
 class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for HydroPeak."""
@@ -22,14 +25,41 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             "offre": user_input[CONF_OFFRE_HYDRO]
                         }
                     )
+                
+            if self.descriptions_map is not None:
+                user_input['description_fr'] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
+            else:
+                _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
             
             return self.async_create_entry(title=user_input[CONF_OFFRE_HYDRO], data=user_input)
         
         errors = {}
         try:
             available_offers = await fetch_available_offers()
-            offers_with_descriptions = {offer: OFFRES_DESCRIPTION.get(offer, offer) for offer in available_offers}
+
+            # array of objects:
+            # key: offresdisponibles, value: description_fr
+            try:
+                offers_descriptions = await fetch_offers_descriptions()
+            except Exception as e:
+                _LOGGER.error("Error fetching offers descriptions: %s", e)
+                offers_descriptions = []
+
+            # map offers_descriptions by key for easy lookup
+            self.descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
+            offers_with_descriptions = {}
+            for offer in available_offers:
+                override_description = OFFRES_DESCRIPTION.get(offer)
+                if override_description:
+                    offers_with_descriptions[offer] = override_description
+                    continue
+
+                description_fr = self.descriptions_map.get(offer, {}).get("description_fr", "")
+                description_short = description_fr.split('\n', 1)[0] if description_fr else ""
+                label = f"{offer} ({description_short})" if description_short else offer
+                offers_with_descriptions[offer] = label
         except Exception as e:
+            _LOGGER.error("Error obtaining offers: %s", e)
             errors["base"] = "failed_to_obtain_offers"
             offers_with_descriptions = {}
         
@@ -52,11 +82,10 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 class OptionsFlowHandler(config_entries.OptionsFlow):
     """Options flow for HydroPeak."""
-    
+
     def __init__(self, config_entry):
-        """Set config entry for backwards compatibility."""
-        if not hasattr(self, "config_entry"):
-            self.config_entry = config_entry
+        """Initialize options flow."""
+        self.config_entry = config_entry
             
     async def async_step_init(self, user_input=None):
         """Handle the option menu."""
