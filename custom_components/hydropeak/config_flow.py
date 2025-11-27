@@ -1,9 +1,12 @@
 from homeassistant import config_entries
 from homeassistant.core import callback
 import voluptuous as vol
+import logging
 
 from .donnees_ouvertes import fetch_available_offers, fetch_offers_descriptions
 from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
+
+_LOGGER = logging.getLogger(__name__)
 
 class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for HydroPeak."""
@@ -37,6 +40,7 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
             offers_with_descriptions = {offer: descriptions_map[offer]["description_fr"] for offer in available_offers}
         except Exception as e:
+            _LOGGER.error("Error obtaining offers: %s", e)
             errors["base"] = "failed_to_obtain_offers"
             offers_with_descriptions = {}
         
