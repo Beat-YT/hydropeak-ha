@@ -1,12 +1,9 @@
 from homeassistant import config_entries
 from homeassistant.core import callback
 import voluptuous as vol
-import logging
 
-from .donnees_ouvertes import fetch_available_offers, fetch_offers_descriptions
+from .donnees_ouvertes import fetch_available_offers
 from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
-
-_LOGGER = logging.getLogger(__name__)
 
 class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for HydroPeak."""
@@ -31,21 +28,8 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
         try:
             available_offers = await fetch_available_offers()
-
-            # array of objects:
-            # key: offresdisponibles, value: description_fr
-            offers_descriptions = await fetch_offers_descriptions()
-
-            # map offers_descriptions by key for easy lookup
-            descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
-            offers_with_descriptions = {}
-            for offer in available_offers:
-                description_fr = descriptions_map.get(offer, {}).get("description_fr", "")
-                description_short = description_fr.split('\n', 1)[0] if description_fr else ""
-                label = f"{offer} ({description_short})" if description_short else offer
-                offers_with_descriptions[offer] = label
+            offers_with_descriptions = {offer: OFFRES_DESCRIPTION.get(offer, offer) for offer in available_offers}
         except Exception as e:
-            _LOGGER.error("Error obtaining offers: %s", e)
             errors["base"] = "failed_to_obtain_offers"
             offers_with_descriptions = {}
         
