@@ -28,6 +28,9 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 
             if self.descriptions_map is not None:
                 user_input['description_fr'] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
+                _LOGGER.error("Selected offer description: %s", user_input['description_fr'])
+            else:
+                _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
             
             return self.async_create_entry(title=user_input[CONF_OFFRE_HYDRO], data=user_input)
         
