@@ -25,6 +25,9 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             "offre": user_input[CONF_OFFRE_HYDRO]
                         }
                     )
+                
+            if self.descriptions_map is not None:
+                user_input['description_fr'] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
             
             return self.async_create_entry(title=user_input[CONF_OFFRE_HYDRO], data=user_input)
         
@@ -37,7 +40,7 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             offers_descriptions = await fetch_offers_descriptions()
 
             # map offers_descriptions by key for easy lookup
-            descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
+            self.descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
             offers_with_descriptions = {}
             for offer in available_offers:
                 override_description = OFFRES_DESCRIPTION.get(offer)
@@ -45,7 +48,7 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     offers_with_descriptions[offer] = override_description
                     continue
 
-                description_fr = descriptions_map.get(offer, {}).get("description_fr", "")
+                description_fr = self.descriptions_map.get(offer, {}).get("description_fr", "")
                 description_short = description_fr.split('\n', 1)[0] if description_fr else ""
                 label = f"{offer} ({description_short})" if description_short else offer
                 offers_with_descriptions[offer] = label

@@ -42,16 +42,17 @@ async def async_setup_entry(hass, entry, async_add_entities):
     offre_hydro = entry.data[CONF_OFFRE_HYDRO]
     preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
     coordinator = hass.data[DOMAIN]['coordinator']
+    description_fr = entry.data.get('description_fr', OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro))
     
     _LOGGER.debug("Adding Binary Sensors for %s", offre_hydro)
     async_add_entities(
-        PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
+        PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
     )
     
 class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """Representation of a peak binary sensor."""
 
-    def __init__(self, coordinator, sensor_id, details, offre_hydro, preheat_duration):
+    def __init__(self, coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
         
         if sensor_id == "preheat_active":
@@ -68,7 +69,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self.entity_category = EntityCategory.DIAGNOSTIC
         self.device_info = DeviceInfo(
             name=offre_hydro,
-            model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
+            model=description_fr,
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
         )
