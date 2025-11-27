@@ -42,9 +42,9 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             for offer in available_offers:
                 override_description = OFFRES_DESCRIPTION.get(offer)
                 if override_description:
-                    label = override_description
+                    offers_with_descriptions[offer] = override_description
                     continue
-                
+
                 description_fr = descriptions_map.get(offer, {}).get("description_fr", "")
                 description_short = description_fr.split('\n', 1)[0] if description_fr else ""
                 label = f"{offer} ({description_short})" if description_short else offer
