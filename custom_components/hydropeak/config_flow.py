@@ -28,7 +28,6 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 
             if self.descriptions_map is not None:
                 user_input['description_fr'] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
-                _LOGGER.error("Selected offer description: %s", user_input['description_fr'])
             else:
                 _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
             
@@ -40,7 +39,11 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             # array of objects:
             # key: offresdisponibles, value: description_fr
-            offers_descriptions = await fetch_offers_descriptions()
+            try:
+                offers_descriptions = await fetch_offers_descriptions()
+            except Exception as e:
+                _LOGGER.error("Error fetching offers descriptions: %s", e)
+                offers_descriptions = []
 
             # map offers_descriptions by key for easy lookup
             self.descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
