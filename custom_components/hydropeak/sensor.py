@@ -46,7 +46,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     offre_hydro = entry.data[CONF_OFFRE_HYDRO]
     preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
     coordinator = hass.data[DOMAIN]['coordinator']
-    description_fr = entry.data.get('description_fr', OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro))
+    description_fr = entry.data.get('description_fr', None)
     
     _LOGGER.debug("Adding Sensors for %s", offre_hydro)
     is_CPC = offre_hydro.startswith("CPC")
@@ -76,7 +76,9 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         self.device_class = details["device_class"]
         self.device_info = DeviceInfo(
             name=offre_hydro,
-            model=description_fr,
+            manufacturer=None,
+            sw_version=description_fr,
+            model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
         )
