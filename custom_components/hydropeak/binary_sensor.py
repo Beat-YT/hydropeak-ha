@@ -69,7 +69,8 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self.entity_category = EntityCategory.DIAGNOSTIC
         self.device_info = DeviceInfo(
             name=offre_hydro,
-            model=description_fr,
+            manufacturer=description_fr,
+            model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
         )

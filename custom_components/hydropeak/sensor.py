@@ -76,7 +76,8 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         self.device_class = details["device_class"]
         self.device_info = DeviceInfo(
             name=offre_hydro,
-            model=description_fr,
+            manufacturer=description_fr,
+            model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
         )
