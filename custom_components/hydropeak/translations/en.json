@@ -38,5 +38,12 @@
         "bad_json": {
             "message": "An error occurred while parsing the Hydro-Québec API response. Please try again later."
         }
+    },
+    "entity": {
+        "sensor": {
+            "peak_active": {
+                "name": "peak in progress test"
+            }
+        }
     }
 }
