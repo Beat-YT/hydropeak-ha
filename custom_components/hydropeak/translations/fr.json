@@ -42,13 +42,13 @@
     "entity": {
         "sensor": {
             "event_start": {
-                "name": "Événement prochain début"
+                "name": "Événement début"
             },
             "event_end": {
-                "name": "Événement prochain fin"
+                "name": "Événement fin"
             },
             "preheat_start": {
-                "name": "Préchauffage début"
+                "name": "Début du préchauffage"
             },
             "anchor_start": {
                 "name": "Période d'ancrage début"
