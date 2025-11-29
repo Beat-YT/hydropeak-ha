@@ -55,6 +55,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self.offre_hydro = offre_hydro
 
         self.sensor_id = sensor_id
+        self._attr_has_entity_name = True
         self._attr_translation_key = f"{sensor_id}"
         self._attr_unique_id = f"{offre_hydro}_{sensor_id}"
         #self._attr_name = sensor_id.replace("_", " ").title()
