@@ -38,5 +38,27 @@
         "bad_json": {
             "message": "Une erreur s'est produite lors de l'analyse de la réponse de l'API Hydro-Québec. Veuillez réessayer plus tard."
         }
+    },
+    "entity": {
+        "binary_sensor": {
+            "peak_active": {
+                "name": "Pic en cours"
+            },
+            "preheat_active": {
+                "name": "Préchauffage en cours"
+            },
+            "peak_today_AM": {
+                "name": "Pic du matin aujourd'hui"
+            },
+            "peak_tomorrow_AM": {
+                "name": "Pic du matin demain"
+            },
+            "peak_today_PM": {
+                "name": "Pic du soir aujourd'hui"
+            },
+            "peak_tomorrow_PM": {
+                "name": "Pic du soir demain"
+            }
+        }
     }
 }

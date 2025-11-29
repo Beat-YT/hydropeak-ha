@@ -42,6 +42,28 @@
     "entity": {
         "binary_sensor": {
             "peak_active": {
+                "name": "Peak in progress"
+            },
+            "preheat_active": {
+                "name": "Preheat in Progress"
+            },
+            "peak_today_AM": {
+                "name": "Morning Peak Today"
+            },
+            "peak_tomorrow_AM": {
+                "name": "Morning Peak Tomorrow"
+            },
+            "peak_today_PM": {
+                "name": "Evening Peak Today"
+            },
+            "peak_tomorrow_PM": {
+                "name": "Evening Peak Tomorrow"
+            }
+        }
+    },
+    "entity": {
+        "binary_sensor": {
+            "peak_active": {
                 "name": "peak in progress test"
             }
         }

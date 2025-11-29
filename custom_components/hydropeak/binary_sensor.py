@@ -15,25 +15,15 @@ _LOGGER = logging.getLogger(__name__)
 
 BINARY_SENSORS = {
     "peak_active": {
-        "name": "Peak in progress",
         "icon": "mdi:flash-alert"
     },
     "preheat_active": {
-        "name": "Preheat in Progress",
         "icon": "mdi:flash-alert"
     },
-    "peak_today_AM": {
-        "name": "Morning Peak Today",
-    },
-    "peak_tomorrow_AM": {
-        "name": "Morning Peak Tomorrow",
-    },
-    "peak_today_PM": {
-        "name": "Evening Peak Today",
-    },
-    "peak_tomorrow_PM": {
-        "name": "Evening Peak Tomorrow",
-    },
+    "peak_today_AM": {},
+    "peak_tomorrow_AM": {},
+    "peak_today_PM": {},
+    "peak_tomorrow_PM": {},
 }
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -65,7 +55,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
         self.unique_id = f"{offre_hydro}_{sensor_id}"
-        self.name = details.get("name")
+        self.name = sensor_id.replace("_", " ").title()
         self.icon = details.get("icon")
         self.entity_category = EntityCategory.DIAGNOSTIC
         self.device_info = DeviceInfo(
@@ -80,6 +70,13 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     async def async_added_to_hass(self):
         """Initial update from coordinator."""
         await super().async_added_to_hass()
+        # Load translations for the entity name
+        language = self.hass.config.language
+        translations = await self.hass.helpers.translation.async_get_translations(self.hass, language, DOMAIN)
+        key = f"entity.binary_sensor.{self.sensor_id}.name"
+        translated_name = translations.get(key)
+        if translated_name:
+            self.name = translated_name
         self.update_from_coordinator()
         
     @callback
