@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import logging
 
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, OFFRES_DESCRIPTION
 
 from homeassistant.core import callback
 from homeassistant.const import EntityCategory
@@ -32,11 +32,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
     offre_hydro = entry.data[CONF_OFFRE_HYDRO]
     preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
     coordinator = hass.data[DOMAIN]['coordinator']
-    description_fr = entry.data.get('description_fr', None)
+    device_ver = entry.data.get(CONF_DEVICE_VER, None)
     
     _LOGGER.debug("Adding Binary Sensors for %s", offre_hydro)
     async_add_entities(
-        PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
+        PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
     )
     
 class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
@@ -47,7 +47,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     _unsub_next_update = None
     _state = False
 
-    def __init__(self, coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration):
+    def __init__(self, coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
         
         if sensor_id == "preheat_active":
@@ -62,7 +62,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self._attr_device_info = DeviceInfo(
             name=offre_hydro,
             manufacturer=None,
-            sw_version=description_fr,
+            sw_version=device_ver,
             model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,

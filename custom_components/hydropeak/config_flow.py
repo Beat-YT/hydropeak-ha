@@ -4,7 +4,7 @@ import voluptuous as vol
 import logging
 
 from .donnees_ouvertes import fetch_available_offers, fetch_offers_descriptions
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, OFFRES_DESCRIPTION
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 
             if self.descriptions_map is not None:
-                user_input['description_fr'] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
+                user_input[CONF_DEVICE_VER] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
             else:
                 _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
             
