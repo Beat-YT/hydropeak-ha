@@ -42,19 +42,19 @@
     "entity": {
         "sensor": {
             "event_start": {
-                "name": "Début du prochain événement"
+                "name": "Événement prochain début"
             },
             "event_end": {
-                "name": "Fin du prochain événement"
+                "name": "Événement prochain fin"
             },
             "preheat_start": {
-                "name": "Début du préchauffage"
+                "name": "Préchauffage début"
             },
             "anchor_start": {
-                "name": "Début période d'ancrage"
+                "name": "Période d'ancrage début"
             },
             "anchor_end": {
-                "name": "Fin période d'ancrage"
+                "name": "Période d'ancrage fin"
             }
         },
         "binary_sensor": {
