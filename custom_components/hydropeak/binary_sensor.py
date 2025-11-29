@@ -58,7 +58,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         if sensor_id == "preheat_active":
             self.preheat_duration = preheat_duration
         
-        self.translation_key = sensor_id
+        self.translation_key = f"binary_sensor.{sensor_id}"
         self.next_update_time = None
         self._unsub_next_update = None
         self._state = False
