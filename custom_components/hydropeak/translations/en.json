@@ -40,7 +40,7 @@
         }
     },
     "entity": {
-        "sensor": {
+        "binary_sensor": {
             "peak_active": {
                 "name": "peak in progress test"
             }
