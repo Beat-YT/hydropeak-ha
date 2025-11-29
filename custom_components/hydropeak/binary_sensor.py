@@ -49,16 +49,19 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
             self.preheat_duration = preheat_duration
         
         self.translation_key = f"binary_sensor.{sensor_id}"
+
         self.next_update_time = None
         self._unsub_next_update = None
         self._state = False
         self.offre_hydro = offre_hydro
+
         self.sensor_id = sensor_id
-        self.unique_id = f"{offre_hydro}_{sensor_id}"
-        self.name = sensor_id.replace("_", " ").title()
-        self.icon = details.get("icon")
-        self.entity_category = EntityCategory.DIAGNOSTIC
-        self.device_info = DeviceInfo(
+        self._attr_translation_key = f"{sensor_id}"
+        self._attr_unique_id = f"{offre_hydro}_{sensor_id}"
+        self._attr_name = sensor_id.replace("_", " ").title()
+        self._attr_icon = details.get("icon")
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_device_info = DeviceInfo(
             name=offre_hydro,
             manufacturer=None,
             sw_version=description_fr,

@@ -60,12 +60,5 @@
                 "name": "Evening Peak Tomorrow"
             }
         }
-    },
-    "entity": {
-        "binary_sensor": {
-            "peak_active": {
-                "name": "peak in progress test"
-            }
-        }
     }
 }
