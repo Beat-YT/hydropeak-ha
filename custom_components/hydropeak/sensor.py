@@ -61,20 +61,23 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class HydroPeakSensor(CoordinatorEntity, SensorEntity):
     """Representation of a HydroPeak Sensor."""
 
+    _attr_has_entity_name = True
+    _state = None
+
     def __init__(self, coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
 
         if sensor_id == "preheat_start":
             self.preheat_duration = preheat_duration
         
-        self._state = None
         self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
-        self.unique_id = f"{offre_hydro}_{sensor_id}"
-        self.name = details["name"]
-        self.icon = details["icon"]
-        self.device_class = details["device_class"]
-        self.device_info = DeviceInfo(
+        self._attr_unique_id = f"{offre_hydro}_{sensor_id}"
+        self._attr_translation_key = sensor_id
+        self._attr_name = sensor_id.replace("_", " ").title()
+        self._attr_icon = details["icon"]
+        self._attr_device_class = details["device_class"]
+        self._attr_device_info = DeviceInfo(
             name=offre_hydro,
             manufacturer=None,
             sw_version=description_fr,

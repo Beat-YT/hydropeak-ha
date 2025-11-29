@@ -40,24 +40,41 @@
         }
     },
     "entity": {
+        "sensor": {
+            "event_start": {
+                "name": "Début du prochain événement"
+            },
+            "event_end": {
+                "name": "Fin du prochain événement"
+            },
+            "preheat_start": {
+                "name": "Début du préchauffage"
+            },
+            "anchor_start": {
+                "name": "Début période d'ancrage"
+            },
+            "anchor_end": {
+                "name": "Fin période d'ancrage"
+            }
+        },
         "binary_sensor": {
             "peak_active": {
-                "name": "Pic en cours"
+                "name": "Évènement actif"
             },
             "preheat_active": {
                 "name": "Préchauffage en cours"
             },
             "peak_today_AM": {
-                "name": "Pic du matin aujourd'hui"
+                "name": "Évènement aujourd'hui AM"
             },
             "peak_tomorrow_AM": {
-                "name": "Pic du matin demain"
+                "name": "Évènement demain AM"
             },
             "peak_today_PM": {
-                "name": "Pic du soir aujourd'hui"
+                "name": "Évènement aujourd'hui PM"
             },
             "peak_tomorrow_PM": {
-                "name": "Pic du soir demain"
+                "name": "Évènement demain PM"
             }
         }
     }

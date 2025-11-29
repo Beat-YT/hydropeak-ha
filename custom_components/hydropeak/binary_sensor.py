@@ -42,23 +42,22 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """Representation of a peak binary sensor."""
 
+    next_update_time = None
+    _attr_has_entity_name = True
+    _unsub_next_update = None
+    _state = False
+
     def __init__(self, coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
         
         if sensor_id == "preheat_active":
             self.preheat_duration = preheat_duration
         
-
-        self.next_update_time = None
-        self._unsub_next_update = None
-        self._state = False
         self.offre_hydro = offre_hydro
-
         self.sensor_id = sensor_id
-        self._attr_has_entity_name = True
-        self._attr_translation_key = f"{sensor_id}"
         self._attr_unique_id = f"{offre_hydro}_{sensor_id}"
-        #self._attr_name = sensor_id.replace("_", " ").title()
+        self._attr_translation_key = sensor_id
+        self._attr_name = sensor_id.replace("_", " ").title()
         self._attr_icon = details.get("icon")
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_device_info = DeviceInfo(

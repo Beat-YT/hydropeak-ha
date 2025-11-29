@@ -40,6 +40,23 @@
         }
     },
     "entity": {
+        "sensor": {
+            "event_start": {
+                "name": "Next Event Start"
+            },
+            "event_end": {
+                "name": "Next Event End"
+            },
+            "preheat_start": {
+                "name": "Preheat Start"
+            },
+            "anchor_start": {
+                "name": "Anchor Period Start"
+            },
+            "anchor_end": {
+                "name": "Anchor Period End"
+            }
+        },
         "binary_sensor": {
             "peak_active": {
                 "name": "Peak in progress"
