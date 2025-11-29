@@ -65,16 +65,16 @@
                 "name": "Preheat in Progress"
             },
             "peak_today_AM": {
-                "name": "Morning Peak Today"
+                "name": "Peak Today AM"
             },
             "peak_tomorrow_AM": {
-                "name": "Morning Peak Tomorrow"
+                "name": "Peak Tomorrow AM"
             },
             "peak_today_PM": {
-                "name": "Evening Peak Today"
+                "name": "Peak Today PM"
             },
             "peak_tomorrow_PM": {
-                "name": "Evening Peak Tomorrow"
+                "name": "Peak Tomorrow PM"
             }
         }
     }

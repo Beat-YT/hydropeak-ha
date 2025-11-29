@@ -74,7 +74,6 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         self.sensor_id = sensor_id
         self._attr_unique_id = f"{offre_hydro}_{sensor_id}"
         self._attr_translation_key = sensor_id
-        self._attr_name = sensor_id.replace("_", " ").title()
         self._attr_icon = details["icon"]
         self._attr_device_class = details["device_class"]
         self._attr_device_info = DeviceInfo(
