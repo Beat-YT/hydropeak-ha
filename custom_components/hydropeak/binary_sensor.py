@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import logging
 
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, OFFRES_DESCRIPTION
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, OFFRES_DESCRIPTION
 
 from homeassistant.core import callback
 from homeassistant.const import EntityCategory
@@ -15,25 +15,15 @@ _LOGGER = logging.getLogger(__name__)
 
 BINARY_SENSORS = {
     "peak_active": {
-        "name": "Peak in progress",
         "icon": "mdi:flash-alert"
     },
     "preheat_active": {
-        "name": "Preheat in Progress",
         "icon": "mdi:flash-alert"
     },
-    "peak_today_AM": {
-        "name": "Morning Peak Today",
-    },
-    "peak_tomorrow_AM": {
-        "name": "Morning Peak Tomorrow",
-    },
-    "peak_today_PM": {
-        "name": "Evening Peak Today",
-    },
-    "peak_tomorrow_PM": {
-        "name": "Evening Peak Tomorrow",
-    },
+    "peak_today_AM": {},
+    "peak_tomorrow_AM": {},
+    "peak_today_PM": {},
+    "peak_tomorrow_PM": {},
 }
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -42,35 +32,37 @@ async def async_setup_entry(hass, entry, async_add_entities):
     offre_hydro = entry.data[CONF_OFFRE_HYDRO]
     preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
     coordinator = hass.data[DOMAIN]['coordinator']
-    description_fr = entry.data.get('description_fr', None)
+    device_ver = entry.data.get(CONF_DEVICE_VER, None)
     
     _LOGGER.debug("Adding Binary Sensors for %s", offre_hydro)
     async_add_entities(
-        PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
+        PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
     )
     
 class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """Representation of a peak binary sensor."""
 
-    def __init__(self, coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration):
+    next_update_time = None
+    _attr_has_entity_name = True
+    _unsub_next_update = None
+    _state = False
+
+    def __init__(self, coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
         
         if sensor_id == "preheat_active":
             self.preheat_duration = preheat_duration
-            
-        self.next_update_time = None
-        self._unsub_next_update = None
-        self._state = False
+        
         self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
-        self.unique_id = f"{offre_hydro}_{sensor_id}"
-        self.name = details.get("name")
-        self.icon = details.get("icon")
-        self.entity_category = EntityCategory.DIAGNOSTIC
-        self.device_info = DeviceInfo(
+        self._attr_unique_id = f"{offre_hydro}_{sensor_id}"
+        self._attr_translation_key = sensor_id
+        self._attr_icon = details.get("icon")
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_device_info = DeviceInfo(
             name=offre_hydro,
             manufacturer=None,
-            sw_version=description_fr,
+            sw_version=device_ver,
             model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,

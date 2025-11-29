@@ -38,5 +38,44 @@
         "bad_json": {
             "message": "An error occurred while parsing the Hydro-Québec API response. Please try again later."
         }
+    },
+    "entity": {
+        "sensor": {
+            "event_start": {
+                "name": "Next Event Being"
+            },
+            "event_end": {
+                "name": "Next Event End"
+            },
+            "preheat_start": {
+                "name": "Preheat Start"
+            },
+            "anchor_start": {
+                "name": "Anchor Period Start"
+            },
+            "anchor_end": {
+                "name": "Anchor Period End"
+            }
+        },
+        "binary_sensor": {
+            "peak_active": {
+                "name": "Peak in progress"
+            },
+            "preheat_active": {
+                "name": "Preheat in progress"
+            },
+            "peak_today_AM": {
+                "name": "Peak Today AM"
+            },
+            "peak_tomorrow_AM": {
+                "name": "Peak Tomorrow AM"
+            },
+            "peak_today_PM": {
+                "name": "Peak Today PM"
+            },
+            "peak_tomorrow_PM": {
+                "name": "Peak Tomorrow PM"
+            }
+        }
     }
 }

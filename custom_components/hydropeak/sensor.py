@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import logging
 
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_UPDATE_INTERVAL, DEFAULT_PREHEAT_DURATION, DEFAULT_UPDATE_INTERVAL, DEFAULT_ANCHOR_OFFSET, DEFAULT_ANCHOR_DURATION, OFFRES_DESCRIPTION
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, DEFAULT_ANCHOR_OFFSET, DEFAULT_ANCHOR_DURATION, OFFRES_DESCRIPTION
 
 from homeassistant.core import callback
 from homeassistant.const import EntityCategory
@@ -14,27 +14,22 @@ _LOGGER = logging.getLogger(__name__)
 
 SENSORS = {
     "event_start": {
-        "name": "Next Event Begin",
         "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
     "event_end": {
-        "name": "Next Event End",
         "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
     "preheat_start": {
-        "name": "Next Preheat Start",
         "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
     "anchor_start": {
-        "name": "Next Anchor Begin",
         "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
     "anchor_end": {
-        "name": "Next Anchor End",
         "icon": "mdi:home-clock",
         "device_class": SensorDeviceClass.TIMESTAMP,
     },
@@ -46,14 +41,14 @@ async def async_setup_entry(hass, entry, async_add_entities):
     offre_hydro = entry.data[CONF_OFFRE_HYDRO]
     preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
     coordinator = hass.data[DOMAIN]['coordinator']
-    description_fr = entry.data.get('description_fr', None)
+    device_ver = entry.data.get(CONF_DEVICE_VER, None)
     
     _LOGGER.debug("Adding Sensors for %s", offre_hydro)
     is_CPC = offre_hydro.startswith("CPC")
     
     # only add the anchor sensors for CPC offers
     async_add_entities(
-        HydroPeakSensor(coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration)
+        HydroPeakSensor(coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration)
         for sensor_id, details in SENSORS.items()
         if is_CPC or not sensor_id.startswith("anchor")
     )
@@ -61,23 +56,25 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class HydroPeakSensor(CoordinatorEntity, SensorEntity):
     """Representation of a HydroPeak Sensor."""
 
-    def __init__(self, coordinator, sensor_id, details, offre_hydro, description_fr, preheat_duration):
+    _attr_has_entity_name = True
+    _state = None
+
+    def __init__(self, coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
 
         if sensor_id == "preheat_start":
             self.preheat_duration = preheat_duration
         
-        self._state = None
         self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
-        self.unique_id = f"{offre_hydro}_{sensor_id}"
-        self.name = details["name"]
-        self.icon = details["icon"]
-        self.device_class = details["device_class"]
-        self.device_info = DeviceInfo(
+        self._attr_unique_id = f"{offre_hydro}_{sensor_id}"
+        self._attr_translation_key = sensor_id
+        self._attr_icon = details["icon"]
+        self._attr_device_class = details["device_class"]
+        self._attr_device_info = DeviceInfo(
             name=offre_hydro,
             manufacturer=None,
-            sw_version=description_fr,
+            sw_version=device_ver,
             model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,

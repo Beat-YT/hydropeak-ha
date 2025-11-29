@@ -38,5 +38,44 @@
         "bad_json": {
             "message": "Une erreur s'est produite lors de l'analyse de la réponse de l'API Hydro-Québec. Veuillez réessayer plus tard."
         }
+    },
+    "entity": {
+        "sensor": {
+            "event_start": {
+                "name": "Événement début"
+            },
+            "event_end": {
+                "name": "Événement fin"
+            },
+            "preheat_start": {
+                "name": "Début du préchauffage"
+            },
+            "anchor_start": {
+                "name": "Période d'ancrage début"
+            },
+            "anchor_end": {
+                "name": "Période d'ancrage fin"
+            }
+        },
+        "binary_sensor": {
+            "peak_active": {
+                "name": "Évènement actif"
+            },
+            "preheat_active": {
+                "name": "Préchauffage en cours"
+            },
+            "peak_today_AM": {
+                "name": "Évènement aujourd'hui AM"
+            },
+            "peak_tomorrow_AM": {
+                "name": "Évènement demain AM"
+            },
+            "peak_today_PM": {
+                "name": "Évènement aujourd'hui PM"
+            },
+            "peak_tomorrow_PM": {
+                "name": "Évènement demain PM"
+            }
+        }
     }
 }

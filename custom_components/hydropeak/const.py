@@ -3,6 +3,7 @@ DOMAIN = "hydropeak"
 CONF_OFFRE_HYDRO = "offre_hydro"
 CONF_PREHEAT_DURATION = "preheat_duration"
 CONF_UPDATE_INTERVAL = "update_interval"
+CONF_DEVICE_VER = "description_fr"
 
 # time is in minutes
 DEFAULT_PREHEAT_DURATION = 180
