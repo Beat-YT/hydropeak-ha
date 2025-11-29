@@ -3,7 +3,7 @@
 ![illo-hero-periodes-pointe-16-9](https://github.com/user-attachments/assets/d329116b-6cbd-4cf9-9088-4a1f529f60bf)
 
 
-Hydro-Peak is a Home Assistant integration designed to help you monitor Hydro-Québec peak events. This integration helps you optimize your energy consumption and potentially reduce costs by leveraging preheat events and peak event timings.
+Hydro-Peak is an easy to use Home Assistant integration designed to help you monitor Hydro-Québec peak events. This integration helps you optimize your energy consumption and potentially reduce costs by leveraging preheat events and peak event timings.
 
 
 ## Installation
