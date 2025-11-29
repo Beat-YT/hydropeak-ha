@@ -73,13 +73,6 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     async def async_added_to_hass(self):
         """Initial update from coordinator."""
         await super().async_added_to_hass()
-        # Load translations for the entity name
-        language = self.hass.config.language
-        translations = await self.hass.helpers.translation.async_get_translations(self.hass, language, DOMAIN)
-        key = f"entity.binary_sensor.{self.sensor_id}.name"
-        translated_name = translations.get(key)
-        if translated_name:
-            self.name = translated_name
         self.update_from_coordinator()
         
     @callback
