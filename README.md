@@ -41,9 +41,9 @@ These sensors allow you to automate and monitor your energy usage based on the u
 
 ## About
 
-No Hydro-Québec account or login is required. The integration simply retrieves publicly available event schedules which keeps things lightweight and privacy friendly. HydroPeak uses open data provided by Hydro-Québec to monitor peak events. 
+HydroPeak does not connect to any Hydro-Québec customer account and does not require a login. It only uses publicly available open data from Hydro-Québec, which keeps the setup simple and avoids sharing any personal information.
 
-The integration pulls data related to peak event schedules and offers to provide a smooth user experience with hourly updates.
+The integration supports both Residential and Business peak savings programs. When you configure it in Home Assistant, it automatically retrieves the list of active offers for the current winter season along with their descriptions. It then keeps the peak event schedule updated during the day so your Home Assistant automations can use the correct times for preheat periods and peak events.
 
 ### Sources:
 A detailed list of Hydro-Québec offers and descriptions, as well as information about open data, can be found here: <br> [Événements de pointe – Saison hivernale](https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/information/)
