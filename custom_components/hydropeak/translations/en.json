@@ -42,7 +42,7 @@
     "entity": {
         "sensor": {
             "event_start": {
-                "name": "Next Event Start"
+                "name": "Next Event Being"
             },
             "event_end": {
                 "name": "Next Event End"
@@ -62,7 +62,7 @@
                 "name": "Peak in progress"
             },
             "preheat_active": {
-                "name": "Preheat in Progress"
+                "name": "Preheat in progress"
             },
             "peak_today_AM": {
                 "name": "Peak Today AM"
