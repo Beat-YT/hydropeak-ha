@@ -50,9 +50,14 @@ A detailed list of Hydro-Québec offers and descriptions, as well as information
 
 A list of all events published by Hydro-Québec is also available: <br> [Événements de pointe – Saison hivernale — Données ouvertes Hydro-Québec](https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/table/?sort=datedebut)
 
-## Contributing
+## Community & Support
 
-- Contributions are welcome! Please feel free to open an issue or submit a pull request if you'd like to improve this integration.
+Have questions, feature ideas, or want to share your automations using HydroPeak?
+
+Join the Domo-Québec Discord community and chat with others in the #general-hydropeak channel!
+
+📩 Discord invite:
+https://discord.gg/M8UabTrZAj
 
 ## License
 
