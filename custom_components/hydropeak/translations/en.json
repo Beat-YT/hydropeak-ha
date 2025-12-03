@@ -42,7 +42,7 @@
     "entity": {
         "sensor": {
             "event_start": {
-                "name": "Next Event Being"
+                "name": "Next Event Begin"
             },
             "event_end": {
                 "name": "Next Event End"
