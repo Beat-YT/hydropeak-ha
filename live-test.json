@@ -1,6 +1,7 @@
 {
   "offresDisponibles": [
-    "TPC-DPC"
+    "TPC-DPC",
+    "CPC-D"
   ],
   "derniereExecution": [
     "2025-12-05 21:21:16"
@@ -8,6 +9,14 @@
   "evenements": [
     {
       "offre": "TPC-DPC",
+      "dateDebut": "2025-12-05T21:58:00-05:00",
+      "dateFin": "2025-12-05T22:59:00-05:00",
+      "plageHoraire": "PM",
+      "duree": "PT04H00MS",
+      "secteurClient": "Residentiel"
+    },
+    {
+      "offre": "CPC-D",
       "dateDebut": "2025-12-05T21:58:00-05:00",
       "dateFin": "2025-12-05T22:59:00-05:00",
       "plageHoraire": "PM",
