@@ -17,21 +17,17 @@
 ## Automations
 
 A blueprint is a template that simplifies the process of creating automations by providing pre-configured settings and triggers. 
-Using these blueprints, you can quickly set up automations  to Hydro-Peak.
+Using these blueprints, you can quickly set up automations tailored to Hydro-Peak.
 
-### Winter Credit
+####  Blueprint in english: <br>
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FBeat-YT%2Fhydropeak-ha%2Frefs%2Fheads%2Fmain%2Fblueprints%2Fhydropeak-english.yaml)
 
-- Use the blueprint for Winter Credit to automate actions during peak events:
+#### Blueprint en français: <br>
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FBeat-YT%2Fhydropeak-ha%2Frefs%2Fheads%2Fmain%2Fblueprints%2Fhydropeak-francais.yaml)
 
-  [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FBeat-YT%2Fhydropeak-ha%2Frefs%2Fheads%2Fmain%2Fblueprints%2Fcpc-d.yaml)
-
-### Flex-D
-
-- Use the blueprint for Flex-D to automate actions during peak events:
-
-  [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2FBeat-YT%2Fhydropeak-ha%2Frefs%2Fheads%2Fmain%2Fblueprints%2Fflex-d.yaml)
 
 ## Notes
 
 - Ensure you configure the integration with the correct rate plan offer for accurate results.
 - Use the sensors in your automations to turn off non-essential devices, adjust heating, or prepare your smart home for peak events.
+- Do not rely on diagnostic sensors for triggering automations.
