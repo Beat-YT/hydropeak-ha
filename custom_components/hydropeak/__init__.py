@@ -36,11 +36,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     is_reload = hass.data[DOMAIN].get(f"unloaded_{offre}", False)
     if is_reload:
-        _LOGGER.debug("Detected reload for %s, refreshing coordinator", offre)
+        _LOGGER.debug("Reload detected for %s, refreshing coordinator", offre)
         hass.data[DOMAIN].pop(f"unloaded_{offre}", None)
         await coordinator.async_refresh()
-    else:
-        _LOGGER.debug("Normal setup for %s", offre)
     
     await hass.config_entries.async_forward_entry_setups(entry, ["sensor", "binary_sensor"])
     return True
