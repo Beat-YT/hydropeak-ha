@@ -33,6 +33,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if coordinator is None:
         _LOGGER.error("Coordinator is not setup")
         return False
+
+    is_reload = hass.data[DOMAIN].get(f"unloaded_{offre}", False)
+    if is_reload:
+        _LOGGER.debug("Reload detected for %s, refreshing coordinator", offre)
+        hass.data[DOMAIN].pop(f"unloaded_{offre}", None)
+        await coordinator.async_refresh()
     
     await hass.config_entries.async_forward_entry_setups(entry, ["sensor", "binary_sensor"])
     return True
@@ -41,6 +47,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
     offre = entry.data.get(CONF_OFFRE_HYDRO)
     _LOGGER.debug("Unloading entry for %s", offre)
+
+    # use this flag to detect entry reload
+    hass.data[DOMAIN][f"unloaded_{offre}"] = True
+
     await hass.config_entries.async_unload_platforms(entry, ["sensor", "binary_sensor"])
     return True
 
