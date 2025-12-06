@@ -34,8 +34,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN]['coordinator']
     device_ver = entry.data.get(CONF_DEVICE_VER, None)
 
-
-    _LOGGER.debug("device_ver for %s: %s", offre_hydro, device_ver)
     _LOGGER.debug("Adding Binary Sensors for %s", offre_hydro)
     async_add_entities(
         PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
