@@ -60,10 +60,16 @@ async def fetch_available_offers():
 
 async def fetch_offers_descriptions():
     """Fetch offers descriptions from Hydro API."""
+
     url = "https://donnees.hydroquebec.com/api/explore/v2.1/catalog/datasets/evenements-de-pointe-offres-disponibles/records"
     
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    params = {
+        "where": f"debut<='{current_date}' AND fin>='{current_date}'"
+    }
+    
     async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
+        async with session.get(url, params=params) as response:
             handle_exception(response)
             try:
                 data = await response.json(content_type=None)
@@ -73,4 +79,4 @@ async def fetch_offers_descriptions():
                     translation_key="json_error"
                 ) from e
     
-    return data["results"]
+    return data.get("results", [])

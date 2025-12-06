@@ -28,6 +28,7 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 
             if self.descriptions_map is not None:
                 user_input[CONF_DEVICE_VER] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
+                _LOGGER.debug("Configured description '%s' for %s", user_input[CONF_DEVICE_VER], user_input[CONF_OFFRE_HYDRO])
             else:
                 _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
             
