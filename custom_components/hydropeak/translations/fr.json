@@ -14,7 +14,7 @@
             "already_configured": "L'offre {offre} est déjà configurée."
         },
         "error": {
-            "failed_to_obtain_offers": "Impossible d'obtenir les offres disponibles. Veuillez l'entrer manuellement."
+            "failed_to_obtain_offers": "Impossible d'obtenir les offres disponibles. Veuillez vérifier votre réseau ou réessayer plus tard. Vous pouvez également la saisir manuellement."
         }
     },
     "options": {
@@ -59,22 +59,22 @@
         },
         "binary_sensor": {
             "peak_active": {
-                "name": "Évènement actif"
+                "name": "Événement actif"
             },
             "preheat_active": {
                 "name": "Préchauffage en cours"
             },
             "peak_today_AM": {
-                "name": "Évènement aujourd'hui AM"
+                "name": "Événement aujourd'hui AM"
             },
             "peak_tomorrow_AM": {
-                "name": "Évènement demain AM"
+                "name": "Événement demain AM"
             },
             "peak_today_PM": {
-                "name": "Évènement aujourd'hui PM"
+                "name": "Événement aujourd'hui PM"
             },
             "peak_tomorrow_PM": {
-                "name": "Évènement demain PM"
+                "name": "Événement demain PM"
             }
         }
     }
