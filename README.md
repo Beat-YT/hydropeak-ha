@@ -37,7 +37,7 @@ Once configured, HydroPeak will create the following sensors in Home Assistant:
 - **Event End**: A timestamp indicating when the peak event will end.
 - **Preheat Start**: A timestamp when devices should start preheating or preparing, as configured during setup.
 
-These sensors allow you to automate and monitor your energy usage based on the upcoming peak events.
+These sensors allow you to automate and regulate your energy usage based on the upcoming peak events.
 
 ## About
 
