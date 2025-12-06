@@ -33,7 +33,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
     preheat_duration = entry.data.get(CONF_PREHEAT_DURATION, DEFAULT_PREHEAT_DURATION)
     coordinator = hass.data[DOMAIN]['coordinator']
     device_ver = entry.data.get(CONF_DEVICE_VER, None)
-    
+
+
+    _LOGGER.debug("device_ver for %s: %s", offre_hydro, device_ver)
     _LOGGER.debug("Adding Binary Sensors for %s", offre_hydro)
     async_add_entities(
         PeakBinarySensor(coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration) for sensor_id, details in BINARY_SENSORS.items()
@@ -49,6 +51,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
     def __init__(self, coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration):
         super().__init__(coordinator, context=offre_hydro)
+
         
         if sensor_id == "preheat_active":
             self.preheat_duration = preheat_duration
