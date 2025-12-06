@@ -67,7 +67,7 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         
         self.offre_hydro = offre_hydro
         self.sensor_id = sensor_id
-        self.unique_id = f"{offre_hydro}_{sensor_id}"
+        self._attr_unique_id = f"{offre_hydro}_{sensor_id}"
         self._attr_translation_key = sensor_id
         self._attr_icon = details["icon"]
         self._attr_device_class = details["device_class"]
