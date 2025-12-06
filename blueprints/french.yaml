@@ -1,0 +1,87 @@
+blueprint:
+  name: Évènement Pointe Hydro-Québec (HydroPeak)
+  description: "Automatisation des événements de pointe critique d'Hydro-Québec (HydroPeak) pour gérer efficacement les périodes de pointe."
+  domain: automation
+  input:
+    preheat_time:
+      name: Capteur — Début du préchauffage
+      description: "Sélectionnez le capteur timestamp HydroPeak correspondant au début du préchauffage."
+      selector:
+        entity:
+          filter:
+            - integration: hydropeak
+              domain: sensor
+              device_class: timestamp
+
+    peak_start_time:
+      name: Capteur — Début de la pointe
+      description: "Sélectionnez le capteur timestamp HydroPeak correspondant au début de la pointe."
+      selector:
+        entity:
+          filter:
+            - integration: hydropeak
+              domain: sensor
+              device_class: timestamp
+
+    peak_end_time:
+      name: Capteur — Fin de la pointe
+      description: "Sélectionnez le capteur timestamp HydroPeak correspondant à la fin de la pointe."
+      selector:
+        entity:
+          filter:
+            - integration: hydropeak
+              domain: sensor
+              device_class: timestamp
+
+    preheat_action:
+      name: Actions pour la phase de préchauffage
+      description: "À réaliser avant la période critique pour anticiper la pointe, comme ajuster le chauffage ou chauffer l'eau."
+      default: []
+      selector:
+        action: {}
+
+    peak_begin_action:
+      name: Actions au début de la pointe
+      description: "À exécuter au début de la période de pointe critique pour réduire votre consommation électrique, comme désactiver certains appareils."
+      default: []
+      selector:
+        action: {}
+
+    peak_end_action:
+      name: Actions à la fin de la pointe
+      description: "À exécuter une fois la période de pointe terminée, pour rétablir vos paramètres habituels."
+      default: []
+      selector:
+        action: {}
+
+mode: parallel
+
+trigger:
+  - platform: time
+    at: !input preheat_time
+    id: pre_heat_trigger
+
+  - platform: time
+    at: !input peak_start_time
+    id: peak_start_trigger
+
+  - platform: time
+    at: !input peak_end_time
+    id: peak_end_trigger
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: pre_heat_trigger
+        sequence: !input preheat_action
+
+      - conditions:
+          - condition: trigger
+            id: peak_start_trigger
+        sequence: !input peak_begin_action
+
+      - conditions:
+          - condition: trigger
+            id: peak_end_trigger
+        sequence: !input peak_end_action

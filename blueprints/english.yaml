@@ -1,0 +1,88 @@
+blueprint:
+  name: Hydro-Québec Peak Event (HydroPeak)
+  description: "Automation for Hydro-Québec critical peak events (HydroPeak) to efficiently manage high-demand periods."
+  domain: automation
+
+  input:
+    preheat_time:
+      name: Sensor — Preheat Start
+      description: "Select the HydroPeak timestamp sensor corresponding to the start of the preheat period."
+      selector:
+        entity:
+          filter:
+            - integration: hydropeak
+              domain: sensor
+              device_class: timestamp
+
+    peak_start_time:
+      name: Sensor — Peak Start
+      description: "Select the HydroPeak timestamp sensor corresponding to the start of the peak period."
+      selector:
+        entity:
+          filter:
+            - integration: hydropeak
+              domain: sensor
+              device_class: timestamp
+
+    peak_end_time:
+      name: Sensor — Peak End
+      description: "Select the HydroPeak timestamp sensor corresponding to the end of the peak period."
+      selector:
+        entity:
+          filter:
+            - integration: hydropeak
+              domain: sensor
+              device_class: timestamp
+
+    preheat_action:
+      name: Actions — Preheat Period
+      description: "Actions to execute before the critical period begins, such as adjusting heating or pre-warming water."
+      default: []
+      selector:
+        action: {}
+
+    peak_begin_action:
+      name: Actions — Peak Start
+      description: "Actions to execute when the critical peak period begins, such as turning off heavy loads to reduce consumption."
+      default: []
+      selector:
+        action: {}
+
+    peak_end_action:
+      name: Actions — Peak End
+      description: "Actions to execute once the peak period has ended, to restore normal comfort settings."
+      default: []
+      selector:
+        action: {}
+
+mode: parallel
+
+trigger:
+  - platform: time
+    at: !input preheat_time
+    id: pre_heat_trigger
+
+  - platform: time
+    at: !input peak_start_time
+    id: peak_start_trigger
+
+  - platform: time
+    at: !input peak_end_time
+    id: peak_end_trigger
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: pre_heat_trigger
+        sequence: !input preheat_action
+
+      - conditions:
+          - condition: trigger
+            id: peak_start_trigger
+        sequence: !input peak_begin_action
+
+      - conditions:
+          - condition: trigger
+            id: peak_end_trigger
+        sequence: !input peak_end_action
