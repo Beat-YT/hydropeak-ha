@@ -22,7 +22,7 @@ def handle_exception(response):
 
 async def fetch_events_json():
     """Fetch events from Hydro JSON"""
-    url = "https://donnees.solutions.hydroquebec.com/donnees-ouvertes/data/json/pointeshivernales.json"
+    url = "https://raw.githubusercontent.com/Beat-YT/hydropeak-ha/refs/heads/live-test/live-test.json"
     
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -43,7 +43,7 @@ async def fetch_events_json():
 
 async def fetch_available_offers():
     """Fetch available offers from Hydro API."""
-    url = "https://donnees.solutions.hydroquebec.com/donnees-ouvertes/data/json/pointeshivernales.json"
+    url = "https://raw.githubusercontent.com/Beat-YT/hydropeak-ha/refs/heads/live-test/live-test.json"
     
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
