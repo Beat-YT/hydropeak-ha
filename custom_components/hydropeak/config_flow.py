@@ -26,11 +26,11 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         }
                     )
                 
-            if self.descriptions_map is not None:
-                user_input[CONF_DEVICE_VER] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
-                _LOGGER.debug("Configured description '%s' for %s", user_input[CONF_DEVICE_VER], user_input[CONF_OFFRE_HYDRO])
-            else:
-                _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
+            #if self.descriptions_map is not None:
+            #    user_input[CONF_DEVICE_VER] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
+            #    _LOGGER.debug("Configured description '%s' for %s", user_input[CONF_DEVICE_VER], user_input[CONF_OFFRE_HYDRO])
+            #else:
+            #    _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
             
             return self.async_create_entry(title=user_input[CONF_OFFRE_HYDRO], data=user_input)
         
@@ -47,7 +47,7 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             #    offers_descriptions = []
             # map offers_descriptions by key for easy lookup
             # self.descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
-            
+
             offers_with_descriptions = { offre: OFFRES_DESCRIPTION.get(offre, offre) for offre in available_offers }
         except Exception as e:
             _LOGGER.error("Error obtaining offers: %s", e)
