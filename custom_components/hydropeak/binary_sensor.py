@@ -63,7 +63,7 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self._attr_device_info = DeviceInfo(
             name=offre_hydro,
             manufacturer=None,
-            sw_version=device_ver,
+            sw_version=None,
             model=f"{OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro)}: {device_ver}" if device_ver else OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
