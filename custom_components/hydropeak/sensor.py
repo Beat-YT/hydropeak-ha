@@ -73,7 +73,8 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         self._attr_device_class = details["device_class"]
         self._attr_device_info = DeviceInfo(
             name=offre_hydro,
-            manufacturer=None,
+            manufacturer="Hydro-Québec",
+            sw_version=None,
             model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
