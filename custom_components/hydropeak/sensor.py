@@ -74,7 +74,7 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
         self._attr_device_info = DeviceInfo(
             name=offre_hydro,
             manufacturer=None,
-            model=f"{OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro)}: {device_ver}" if device_ver else OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
+            model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
             configuration_url=f"https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/table/?sort=datedebut&refine.offre={offre_hydro}",
