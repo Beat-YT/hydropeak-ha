@@ -43,8 +43,8 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """Representation of a peak binary sensor."""
 
     next_update_time = None
+    unsub_next_update = None
     _attr_has_entity_name = True
-    _unsub_next_update = None
     _state = False
 
     def __init__(self, coordinator, sensor_id, details, offre_hydro, device_ver, preheat_duration):
@@ -78,6 +78,8 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     def _handle_coordinator_update(self):
         """Handle updated data from the coordinator."""
         self.update_from_coordinator()
+        self.next_update_time = None
+        self.unsub_next_update = None
         
     @callback
     def _handle_time_update(self, now):
@@ -142,11 +144,11 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     def schedule_next_update(self, next_update_time):
         """Set the next update time."""
         if self.next_update_time is None or next_update_time < self.next_update_time:
-            if self._unsub_next_update:
-                self._unsub_next_update()
+            if self.unsub_next_update:
+                self.unsub_next_update()
             self.next_update_time = next_update_time
             _LOGGER.debug(f"Next update for {self.offre_hydro} {self.sensor_id} at {self.next_update_time}")
-            self._unsub_next_update = async_track_point_in_utc_time(
+            self.unsub_next_update = async_track_point_in_utc_time(
                 self.hass, self._handle_time_update, next_update_time
             )
             
