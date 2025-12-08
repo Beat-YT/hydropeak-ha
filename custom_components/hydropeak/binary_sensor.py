@@ -143,9 +143,13 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
                 
     def schedule_next_update(self, next_update_time):
         """Set the next update time."""
-        if self.next_update_time is None or next_update_time < self.next_update_time:
+        if self.next_update_time is None or next_update_time != self.next_update_time:
             if self.unsub_next_update:
-                self.unsub_next_update()
+                try:
+                    self.unsub_next_update()
+                except Exception:
+                    pass
+            
             self.next_update_time = next_update_time
             _LOGGER.debug(f"Next update for {self.offre_hydro} {self.sensor_id} at {self.next_update_time}")
             self.unsub_next_update = async_track_point_in_utc_time(
