@@ -15,7 +15,7 @@ blueprint:
               device_class: timestamp
 
     peak_start_time:
-      name: Sensor — Peak Start
+      name: Sensor — Peak Event Begin
       description: "Select the HydroPeak timestamp sensor corresponding to the start of the peak period."
       selector:
         entity:
@@ -25,7 +25,7 @@ blueprint:
               device_class: timestamp
 
     peak_end_time:
-      name: Sensor — Peak End
+      name: Sensor — Peak Event End
       description: "Select the HydroPeak timestamp sensor corresponding to the end of the peak period."
       selector:
         entity:

@@ -14,7 +14,7 @@
             "already_configured": "Offer {offre} is already configured."
         },
         "error": {
-            "failed_to_obtain_offers": "Failed to obtain available offers. Please enter it manually."
+            "failed_to_obtain_offers": "Failed to obtain available offers. Please check your network or try again later. You may also enter it manually."
         }
     },
     "options": {
@@ -51,7 +51,7 @@
                 "name": "Preheat Start"
             },
             "anchor_start": {
-                "name": "Anchor Period Start"
+                "name": "Anchor Period Begin"
             },
             "anchor_end": {
                 "name": "Anchor Period End"
