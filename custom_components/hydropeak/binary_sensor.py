@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import logging
 
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, OFFRES_DESCRIPTION
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, OFFRES_DESCRIPTION, OFFRE_TABLE_URL
 
 from homeassistant.core import callback
 from homeassistant.const import EntityCategory
@@ -62,11 +62,12 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self._attr_entity_category = EntityCategory.DIAGNOSTIC
         self._attr_device_info = DeviceInfo(
             name=offre_hydro,
-            manufacturer=None,
-            sw_version=device_ver,
-            model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
+            manufacturer="Hydro-Québec",
+            sw_version=None,
+            model=f"{OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro)}: {device_ver}" if device_ver else OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
+            configuration_url=f"{OFFRE_TABLE_URL}&refine.offre={offre_hydro}",
         )
         
     async def async_added_to_hass(self):

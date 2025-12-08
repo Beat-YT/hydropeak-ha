@@ -26,11 +26,11 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                         }
                     )
                 
-            if self.descriptions_map is not None:
-                user_input[CONF_DEVICE_VER] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
-                _LOGGER.debug("Configured description '%s' for %s", user_input[CONF_DEVICE_VER], user_input[CONF_OFFRE_HYDRO])
-            else:
-                _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
+            #if self.descriptions_map is not None:
+            #    user_input[CONF_DEVICE_VER] = self.descriptions_map.get(user_input[CONF_OFFRE_HYDRO], {}).get("description_fr", "")
+            #    _LOGGER.debug("Configured description '%s' for %s", user_input[CONF_DEVICE_VER], user_input[CONF_OFFRE_HYDRO])
+            #else:
+            #    _LOGGER.error("No descriptions map available; skipping description_fr assignment.")
             
             return self.async_create_entry(title=user_input[CONF_OFFRE_HYDRO], data=user_input)
         
@@ -40,25 +40,15 @@ class HydroPeakConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             # array of objects:
             # key: offresdisponibles, value: description_fr
-            try:
-                offers_descriptions = await fetch_offers_descriptions()
-            except Exception as e:
-                _LOGGER.error("Error fetching offers descriptions: %s", e)
-                offers_descriptions = []
-
+            #try:
+            #     offers_descriptions = await fetch_offers_descriptions()
+            #except Exception as e:
+            #    _LOGGER.error("Error fetching offers descriptions: %s", e)
+            #    offers_descriptions = []
             # map offers_descriptions by key for easy lookup
-            self.descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
-            offers_with_descriptions = {}
-            for offer in available_offers:
-                override_description = OFFRES_DESCRIPTION.get(offer)
-                if override_description:
-                    offers_with_descriptions[offer] = override_description
-                    continue
+            # self.descriptions_map = {item["offresdisponibles"]: item for item in offers_descriptions}
 
-                description_fr = self.descriptions_map.get(offer, {}).get("description_fr", "")
-                description_short = description_fr.split('\n', 1)[0] if description_fr else ""
-                label = f"{offer} ({description_short})" if description_short else offer
-                offers_with_descriptions[offer] = label
+            offers_with_descriptions = { offre: OFFRES_DESCRIPTION.get(offre, offre) for offre in available_offers }
         except Exception as e:
             _LOGGER.error("Error obtaining offers: %s", e)
             errors["base"] = "failed_to_obtain_offers"
