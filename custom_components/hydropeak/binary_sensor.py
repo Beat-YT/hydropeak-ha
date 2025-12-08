@@ -78,12 +78,12 @@ class PeakBinarySensor(CoordinatorEntity, BinarySensorEntity):
     def _handle_coordinator_update(self):
         """Handle updated data from the coordinator."""
         self.update_from_coordinator()
-        self.next_update_time = None
-        self.unsub_next_update = None
         
     @callback
     def _handle_time_update(self, now):
         """Handle time-based updates."""
+        self.next_update_time = None
+        self.unsub_next_update = None
         self.update_from_coordinator()
         
     def update_from_coordinator(self):
