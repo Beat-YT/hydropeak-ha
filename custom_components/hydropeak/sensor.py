@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import logging
 
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, DEFAULT_ANCHOR_OFFSET, DEFAULT_ANCHOR_DURATION, OFFRES_DESCRIPTION
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, DEFAULT_ANCHOR_OFFSET, DEFAULT_ANCHOR_DURATION, OFFRES_DESCRIPTION, OFFRE_TABLE_URL
 
 from homeassistant.core import callback
 from homeassistant.const import EntityCategory
@@ -77,7 +77,7 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
             model=OFFRES_DESCRIPTION.get(offre_hydro, offre_hydro),
             identifiers={(DOMAIN, offre_hydro)},
             entry_type=DeviceEntryType.SERVICE,
-            configuration_url=f"https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/table/?sort=datedebut&refine.offre={offre_hydro}",
+            configuration_url=f"{OFFRE_TABLE_URL}&refine.offre={offre_hydro}",
         )
         
         

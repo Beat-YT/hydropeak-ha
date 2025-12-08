@@ -11,7 +11,7 @@ DEFAULT_UPDATE_INTERVAL = 30
 DEFAULT_ANCHOR_OFFSET = 300
 DEFAULT_ANCHOR_DURATION = 180
 
-
+OFFRE_TABLE_URL = "https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/table/?sort=datedebut"
 OFFRES_DESCRIPTION = {
     "CPC-D": "CPC-D (Winter Credit Residential)",
     "TPC-DPC": "TPC-DPC (Flex D)",
