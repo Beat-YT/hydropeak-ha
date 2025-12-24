@@ -42,10 +42,10 @@
     "entity": {
         "sensor": {
             "event_start": {
-                "name": "Next Event Begin"
+                "name": "Event Begin"
             },
             "event_end": {
-                "name": "Next Event End"
+                "name": "Event End"
             },
             "preheat_start": {
                 "name": "Preheat Start"
