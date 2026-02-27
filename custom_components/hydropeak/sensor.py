@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 import logging
 
-from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, DEFAULT_ANCHOR_OFFSET, DEFAULT_ANCHOR_DURATION, OFFRES_DESCRIPTION, OFFRE_TABLE_URL
+from .const import DOMAIN, CONF_OFFRE_HYDRO, CONF_PREHEAT_DURATION, CONF_DEVICE_VER, DEFAULT_PREHEAT_DURATION, DEFAULT_ANCHOR_OFFSET, DEFAULT_ANCHOR_DURATION_AM, DEFAULT_ANCHOR_DURATION_PM, OFFRES_DESCRIPTION, OFFRE_TABLE_URL
 
 from homeassistant.core import callback
 from homeassistant.const import EntityCategory
@@ -121,7 +121,8 @@ class HydroPeakSensor(CoordinatorEntity, SensorEntity):
             anchor_start = evenement["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET)
             self.set_state(anchor_start)
         elif self.sensor_id == "anchor_end":
-            anchor_end = evenement["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET - DEFAULT_ANCHOR_DURATION)
+            anchor_duration = DEFAULT_ANCHOR_DURATION_AM if evenement["dateDebut"].hour < 12 else DEFAULT_ANCHOR_DURATION_PM
+            anchor_end = evenement["dateDebut"] - timedelta(minutes=DEFAULT_ANCHOR_OFFSET - anchor_duration)
             self.set_state(anchor_end)
         else:
             raise ValueError(f"Unknown sensor_id: {self.sensor_id}")
