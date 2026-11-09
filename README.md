@@ -1,64 +1,40 @@
-# ❄️ Hydro-Québec Peak Events in Home Assistant 
+# ❄️ Hydro-Québec Peak Events in Home Assistant
 
 ![illo-hero-periodes-pointe-16-9](https://github.com/user-attachments/assets/d329116b-6cbd-4cf9-9088-4a1f529f60bf)
 
+> [!IMPORTANT]
+> **This repository is archived and no longer maintained.**
+>
+> HydroPeak is now part of Home Assistant core as the official **[Hydro-Québec Peak Events](https://www.home-assistant.io/integrations/hydroquebec_peak/)** integration, available starting with **Home Assistant 2026.11**. No HACS install is needed anymore.
 
-Hydro-Peak is a lightweight Home Assistant integration dedicated to monitoring Hydro-Québec peak events. This integration helps you optimize your energy consumption and potentially reduce costs by leveraging preheat events and peak event timings. It uses the modern hydro-quebec api to retrieve events. 
+## Migrating to the official integration
 
+1. Update Home Assistant to **2026.11** or newer.
+2. Remove the HydroPeak integration from **Settings** > **Devices & services**.
+3. Uninstall HydroPeak from HACS (or delete `custom_components/hydropeak` if installed manually), then restart Home Assistant.
+4. Go to **Settings** > **Devices & services** > **Add Integration** and select **Hydro-Québec Peak Events**.
+5. Pick your peak savings offer and update your automations to use the new entities.
 
-## Installation
+[![Open your Home Assistant instance and start setting up the integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=hydroquebec_peak)
 
-### 1. Install the integration *(Recommended: via HACS)*
+Full documentation: <https://www.home-assistant.io/integrations/hydroquebec_peak/>
 
-The easiest way to install **HydroPeak** is through [**HACS**](https://www.hacs.xyz/).  
-Find HydroPeak in HACS and install it directly from the UI.
+## About this project
 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Beat-YT&repository=hydropeak-ha)
+HydroPeak was a lightweight custom integration for monitoring Hydro-Québec winter peak events using Hydro-Québec open data, with no account or login required. It supported both Residential and Business peak savings programs such as **Flex-D** and **Winter Credit**.
 
+Thanks to everyone who installed it, reported issues and shared automations along the way. 💙
 
-Alternatively, you may install it manually:
+### Sources
 
-- Download the repository files.
-- Copy `custom_components/hydropeak` and paste it into home assistant's `custom_components` folder.
+- [Événements de pointe, Saison hivernale (offers and descriptions)](https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/information/)
+- [Événements de pointe, Saison hivernale (all published events)](https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/table/?sort=datedebut)
 
-### 2. Add the integration in Home Assistant
+## Community
 
-- After installation, go to **Configuration** > **Integrations** > **Add Integration** and search for **HydroPeak**.
-- Configure the integration:
-  - **Select Your Hydro-Québec Savings Offer:** Choose between options such as **Flex-D** or **Winter Credit**
-  - Set your **Preheat Start** time (when your devices should pre-heat before a peak event begins)
-
-
-## Sensors
-
-Once configured, HydroPeak will create the following sensors in Home Assistant:
-
-- **Event Begin**: A timestamp showing when the peak event will begin.
-- **Event End**: A timestamp indicating when the peak event will end.
-- **Preheat Start**: A timestamp when devices should start preheating or preparing, as configured during setup.
-
-These sensors allow you to automate and regulate your energy usage based on the upcoming peak events.
-
-## About
-
-HydroPeak is a standalone integration, it does not connect to any Hydro-Québec customer account and does not require a login. It only uses publicly available open data from Hydro-Québec, which keeps the setup simple, reliable and privacy friendly.
-
-The integration supports both Residential and Business peak savings programs. When you configure it in Home Assistant, it automatically retrieves the list of active offers for the current winter season along with their descriptions. It then keeps the peak event schedule updated during the day so your Home Assistant automations can use the correct times for preheat periods and peak events.
-
-### Sources:
-A detailed list of Hydro-Québec offers and descriptions, as well as information about open data, can be found here: <br> [Événements de pointe – Saison hivernale](https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/information/)
-
-A list of all events published by Hydro-Québec is also available: <br> [Événements de pointe – Saison hivernale — Données ouvertes Hydro-Québec](https://donnees.hydroquebec.com/explore/dataset/evenements-pointe/table/?sort=datedebut)
-
-## Community & Support
-
-Have questions, feature ideas, or want to share your automations using HydroPeak?
-
-Join the Domo-Québec Discord community and chat with others in the #general-hydropeak channel!
-
-📩 Discord invite:
+Questions about the official integration or want to share automations? Join the Domo-Québec Discord in the #general-hydropeak channel:
 https://discord.gg/M8UabTrZAj
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License, see the [LICENSE](LICENSE) file for details.
